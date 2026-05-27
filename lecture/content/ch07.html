@@ -1,9 +1,13 @@
 <h3>🔁 반복문 — for</h3>
 <p>정해진 횟수만큼 또는 순서가 있는 자료를 하나씩 꺼내면서 반복합니다.</p>
 
-<pre data-cb="Zm9yIOuzgOyImCBpbiDrsJjrs7XtlaDrjIDsg4E6CiAgICAjIOuwmOuzte2VoCDsvZTrk5w="></pre>
+<pre class="py-code">for 변수 in 반복할대상:
+    # 반복할 코드</pre>
 
-<pre data-cb="IyDrpqzsiqTtirjsnZgg7JqU7IaM66W8IO2VmOuCmOyUqSDstpzroKUKZnJ1aXRzID0gWyLsgqzqs7wiLCAi67CU64KY64KYIiwgIuuUuOq4sCJdCmZvciBmcnVpdCBpbiBmcnVpdHM6CiAgICBwcmludChmcnVpdCk="></pre>
+<pre class="py-code"># 리스트의 요소를 하나씩 출력
+fruits = [&quot;사과&quot;, &quot;바나나&quot;, &quot;딸기&quot;]
+for fruit in fruits:
+    print(fruit)</pre>
 
 <h3>📌 range() — 숫자 범위 반복</h3>
 <p><code style="font-family:var(--mono)">range()</code>로 반복 횟수를 지정할 수 있습니다.</p>
@@ -23,29 +27,63 @@
 </table>
 </div>
 
-<pre data-cb="Zm9yIGkgaW4gcmFuZ2UoNSk6ICAgICAgICAgICMgMCwgMSwgMiwgMywgNAogICAgcHJpbnQoaSwgZW5kPSIgIikKcHJpbnQoKQoKZm9yIGkgaW4gcmFuZ2UoMSwgNik6ICAgICAgIyAxLCAyLCAzLCA0LCA1CiAgICBwcmludChpLCBlbmQ9IiAiKQpwcmludCgpCgpmb3IgaSBpbiByYW5nZSgwLCAxMCwgMik6ICAjIDAsIDIsIDQsIDYsIDgKICAgIHByaW50KGksIGVuZD0iICIp"></pre>
+<pre class="py-code">for i in range(5):          # 0, 1, 2, 3, 4
+    print(i, end=&quot; &quot;)
+print()
+
+for i in range(1, 6):      # 1, 2, 3, 4, 5
+    print(i, end=&quot; &quot;)
+print()
+
+for i in range(0, 10, 2):  # 0, 2, 4, 6, 8
+    print(i, end=&quot; &quot;)</pre>
 
 <h3>✏️ 실습 1 — for 반복문 직접 입력해 보기</h3>
-<pre data-cb="Zm9yIGkgaW4gcmFuZ2UoMSwgNik6CiAgICBwcmludChmIntpfeuyiOynuCDrsJjrs7UiKQ=="></pre>
-<div data-eb="0" data-code=""></div>
+<pre class="py-code">for i in range(1, 6):
+    print(f&quot;{i}번째 반복&quot;)</pre>
+<div class="py-editor" data-id="0"></div>
 
 <h3>🔁 반복문 — while</h3>
 <p>조건이 참인 동안 계속 반복합니다. 반복 횟수가 정해지지 않았을 때 주로 사용합니다.</p>
 
-<pre data-cb="d2hpbGUg7KGw6rG0OgogICAgIyDsobDqsbTsnbQgVHJ1ZeyduCDrj5nslYgg67CY67O1"></pre>
+<pre class="py-code">while 조건:
+    # 조건이 True인 동안 반복</pre>
 
-<pre data-cb="Y291bnQgPSAxCndoaWxlIGNvdW50IDw9IDU6CiAgICBwcmludChmImNvdW50ID0ge2NvdW50fSIpCiAgICBjb3VudCArPSAxICAgICAgICAgICMg7J20IOykhOydtCDsl4bsnLzrqbQg66y07ZWc66Oo7ZSEIQ=="></pre>
+<pre class="py-code">count = 1
+while count &lt;= 5:
+    print(f&quot;count = {count}&quot;)
+    count += 1          # 이 줄이 없으면 무한루프!</pre>
 
 <div class="warn-box"><strong>⚠️ 무한루프 주의!</strong>while 안에서 조건을 변화시키지 않으면 프로그램이 영원히 멈추지 않습니다. 반드시 탈출 조건을 만들어 주세요.</div>
 
 <h3>✏️ 실습 2 — while 반복문 직접 입력해 보기</h3>
-<pre data-cb="dG90YWwgPSAwCmkgPSAxCndoaWxlIGkgPD0gMTA6CiAgICB0b3RhbCArPSBpCiAgICBpICs9IDEKcHJpbnQoZiIx67aA7YSwIDEw6rmM7KeA7J2YIO2VqToge3RvdGFsfSIp"></pre>
-<div data-eb="1" data-code=""></div>
+<pre class="py-code">total = 0
+i = 1
+while i &lt;= 10:
+    total += i
+    i += 1
+print(f&quot;1부터 10까지의 합: {total}&quot;)</pre>
+<div class="py-editor" data-id="1"></div>
 
 <h3>📌 break와 continue</h3>
 <p><code style="font-family:var(--mono)">break</code>는 반복을 즉시 종료하고, <code style="font-family:var(--mono)">continue</code>는 현재 반복을 건너뛰고 다음으로 넘어갑니다.</p>
-<pre data-cb="IyBicmVhazogM+ydhCDrp4zrgpjrqbQg66mI7LaU6riwCmZvciBpIGluIHJhbmdlKDEsIDYpOgogICAgaWYgaSA9PSAzOgogICAgICAgIGJyZWFrCiAgICBwcmludChpLCBlbmQ9IiAiKSAgICMgMSAyCgpwcmludCgpCgojIGNvbnRpbnVlOiDsp53siJjrp4wg6rG064SI65uw6riwCmZvciBpIGluIHJhbmdlKDEsIDYpOgogICAgaWYgaSAlIDIgPT0gMDoKICAgICAgICBjb250aW51ZQogICAgcHJpbnQoaSwgZW5kPSIgIikgICAjIDEgMyA1"></pre>
+<pre class="py-code"># break: 3을 만나면 멈추기
+for i in range(1, 6):
+    if i == 3:
+        break
+    print(i, end=&quot; &quot;)   # 1 2
+
+print()
+
+# continue: 짝수만 건너뛰기
+for i in range(1, 6):
+    if i % 2 == 0:
+        continue
+    print(i, end=&quot; &quot;)   # 1 3 5</pre>
 
 <h3>✏️ 실습 3 — break와 continue 직접 입력해 보기</h3>
-<pre data-cb="Zm9yIGkgaW4gcmFuZ2UoMSwgMTEpOgogICAgaWYgaSAlIDIgPT0gMDoKICAgICAgICBjb250aW51ZQogICAgcHJpbnQoaSwgZW5kPSIgIikgICAjIO2ZgOyImOunjCDstpzroKU="></pre>
-<div data-eb="2" data-code=""></div>
+<pre class="py-code">for i in range(1, 11):
+    if i % 2 == 0:
+        continue
+    print(i, end=&quot; &quot;)   # 홀수만 출력</pre>
+<div class="py-editor" data-id="2"></div>

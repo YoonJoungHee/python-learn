@@ -1,7 +1,10 @@
 <h3>📦 변수(Variable)란?</h3>
 <p>변수는 데이터를 저장하는 <strong>이름표가 붙은 상자</strong>입니다. 값을 넣어두고 나중에 꺼내 쓸 수 있습니다. <code style="font-family:var(--mono)">=</code> 기호로 값을 저장합니다.</p>
 
-<pre data-cb="bmFtZSA9ICLtmY3quLjrj5kiICAgICAjIOuzgOyImCBuYW1l7JeQIOusuOyekOyXtCDsoIDsnqUKYWdlID0gMTcgICAgICAgICAgICAjIOuzgOyImCBhZ2Xsl5Ag7KCV7IiYIOyggOyepQpoZWlnaHQgPSAxNzIuNSAgICAgICMg67OA7IiYIGhlaWdodOyXkCDsi6TsiJgg7KCA7J6lCnByaW50KG5hbWUsIGFnZSwgaGVpZ2h0KQ=="></pre>
+<pre class="py-code">name = &quot;홍길동&quot;     # 변수 name에 문자열 저장
+age = 17            # 변수 age에 정수 저장
+height = 172.5      # 변수 height에 실수 저장
+print(name, age, height)</pre>
 
 <div class="tip-box"><strong>💡 변수 이름 규칙</strong>
 · 영문자, 숫자, 밑줄(_)만 사용 가능<br>
@@ -11,8 +14,12 @@
 
 <h3>✏️ 실습 1 — 변수 만들고 출력해 보기</h3>
 <p>아래 코드를 보고 직접 입력한 후 실행해 보세요.</p>
-<pre data-cb="c2Nob29sID0gIuydvOyCsOqzoCIKZ3JhZGUgPSAyCmdwYSA9IDMuOApwcmludChzY2hvb2wsIGdyYWRlLCAi7ZWZ64WEIikKcHJpbnQodHlwZShncmFkZSkp"></pre>
-<div data-eb="0" data-code=""></div>
+<pre class="py-code">school = &quot;일산고&quot;
+grade = 2
+gpa = 3.8
+print(school, grade, &quot;학년&quot;)
+print(type(grade))</pre>
+<div class="py-editor" data-id="0"></div>
 
 <h3>🔢 산술 연산자</h3>
 <p>변수에 저장된 값으로 다양한 연산을 할 수 있습니다.</p>
@@ -39,13 +46,27 @@
 
 <h3>✏️ 실습 2 — 변수와 연산자 함께 사용해 보기</h3>
 <p>아래 코드를 직접 입력하고 실행해 보세요.</p>
-<pre data-cb="YSA9IDEwCmIgPSAzCnByaW50KGEgKyBiKQpwcmludChhICoqIGIpCnByaW50KGEgLy8gYikKcHJpbnQoYSAlIGIp"></pre>
-<div data-eb="1" data-code=""></div>
+<pre class="py-code">a = 10
+b = 3
+print(a + b)
+print(a ** b)
+print(a // b)
+print(a % b)</pre>
+<div class="py-editor" data-id="1"></div>
 
 <h3>🔄 복합 대입 연산자</h3>
 <p>변수의 값을 바꿀 때 자주 사용하는 축약 표현입니다.</p>
-<pre data-cb="c2NvcmUgPSAxMDAKc2NvcmUgPSBzY29yZSArIDEwICAgIyDquLDrs7gg67Cp7IudCnNjb3JlICs9IDEwICAgICAgICAgICMg7LaV7JW9IOuwqeyLnSAo6rCZ7J2AIOydmOuvuCkKc2NvcmUgLT0gNSAgICAgICAgICAgIyBzY29yZSA9IHNjb3JlIC0gNQpzY29yZSAqPSAyICAgICAgICAgICAjIHNjb3JlID0gc2NvcmUgKiAyCnByaW50KHNjb3JlKQ=="></pre>
+<pre class="py-code">score = 100
+score = score + 10   # 기본 방식
+score += 10          # 축약 방식 (같은 의미)
+score -= 5           # score = score - 5
+score *= 2           # score = score * 2
+print(score)</pre>
 
 <h3>✏️ 실습 3 — 복합 대입 연산자 사용해 보기</h3>
-<pre data-cb="eCA9IDUwCnggKz0gMjAKeCAtPSAxMAp4ICo9IDIKcHJpbnQoeCk="></pre>
-<div data-eb="2" data-code=""></div>
+<pre class="py-code">x = 50
+x += 20
+x -= 10
+x *= 2
+print(x)</pre>
+<div class="py-editor" data-id="2"></div>
