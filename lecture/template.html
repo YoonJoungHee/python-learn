@@ -114,12 +114,6 @@ pre{padding:.875rem 1.25rem;overflow-x:auto;font-family:var(--mono);font-size:12
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-
-/* 코드 폰트 합자(ligature) 비활성화 */
-pre, code, .ed-ta, .code-block, table td {
-  font-variant-ligatures: none;
-  font-feature-settings: "liga" 0, "calt" 0;
-}
 </style>
 </head>
 <body>
@@ -293,24 +287,33 @@ async function loadChapter(n){
     const text = await res.text();
 
     // UTF-8 안전 base64 디코딩
-    function b64decode(b64){
-      const bin = atob(b64);
+    function b64decode(str){
+      const bin = atob(str);
       const bytes = new Uint8Array(bin.length);
       for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
       return new TextDecoder('utf-8').decode(bytes);
     }
 
-    // innerHTML/DOMParser 없이 정규식으로 직접 치환
-    // <pre data-cb="BASE64"></pre> → cb() 결과
-    // <div data-eb="N" data-code="BASE64"></div> → eb() 결과
-    const html = text
-      .replace(/<pre data-cb="([^"]+)"><\/pre>/g, (_, b64) => cb(b64decode(b64)))
-      .replace(/<div data-eb="(\d+)" data-code="([^"]+)"><\/div>/g,
-               (_, id, b64) => eb(Number(id), b64decode(b64)))
-      .replace(/<div data-eb="(\d+)"><\/div>/g,
-               (_, id) => eb(Number(id), ''));
+    // HTML 파싱 전에 data-cb/data-eb 를 직접 처리
+    // innerHTML 대신 DOMParser 사용 (속성값 보존)
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/html');
 
-    body.innerHTML = html;
+    doc.querySelectorAll('pre[data-cb]').forEach(el => {
+      const code = b64decode(el.getAttribute('data-cb'));
+      const tmp = document.createElement('div');
+      tmp.innerHTML = cb(code);
+      el.replaceWith(tmp.firstChild);
+    });
+    doc.querySelectorAll('div[data-eb]').forEach(el => {
+      const id = el.getAttribute('data-eb');
+      const code = el.getAttribute('data-code') ? b64decode(el.getAttribute('data-code')) : '';
+      const tmp = document.createElement('div');
+      tmp.innerHTML = eb(Number(id), code);
+      el.replaceWith(tmp.firstChild);
+    });
+
+    body.innerHTML = doc.body.innerHTML;
     if(pyodide) body.querySelectorAll('.run-btn').forEach(b=>b.disabled=false);
   } catch(e){
     body.innerHTML = `<div class="loading">불러오기 실패: ${e.message}</div>`;
