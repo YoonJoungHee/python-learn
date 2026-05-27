@@ -1,0 +1,18 @@
+<h3>for 문</h3>
+${cb(`for i in range(5):
+    print(i, "번째 반복")`)}
+<h3>range() 활용</h3>
+${cb(`for i in range(1, 11):      # 1~10
+    print(i, end=" ")
+
+for i in range(0, 11, 2):   # 0,2,4...10
+    print(i, end=" ")`)}
+<h3>while 문</h3>
+${cb(`count = 1
+while count <= 5:
+    print(count, "번째")
+    count += 1`)}
+<div class="warn-box"><strong>⚠️ 무한 루프 주의</strong>while 조건이 항상 True이면 프로그램이 멈추지 않습니다!</div>
+${eb(4,`dan = 3
+for i in range(1, 10):
+    print(dan, "×", i, "=", dan * i)`)}

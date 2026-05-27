@@ -1,0 +1,27 @@
+<h3>산술 연산자</h3>
+${cb(`a, b = 10, 3
+print(a + b)   # 13
+print(a - b)   # 7
+print(a * b)   # 30
+print(a / b)   # 3.333...
+print(a // b)  # 3   (몫)
+print(a % b)   # 1   (나머지)
+print(a ** b)  # 1000 (거듭제곱)`)}
+<h3>비교 연산자 (결과: True/False)</h3>
+${cb(`print(10 > 3)    # True
+print(10 == 10)  # True
+print(10 != 5)   # True
+print(10 <= 9)   # False`)}
+<h3>논리 연산자</h3>
+${cb(`print(True and False)  # False
+print(True or False)   # True
+print(not True)        # False`)}
+<div class="tip-box"><strong>💡 % 활용</strong>num % 2 == 0 이면 짝수입니다!</div>
+${eb(2,`korean = 85
+math = 92
+english = 78
+total = korean + math + english
+average = total / 3
+print("총점:", total)
+print("평균:", average)
+print("90점 이상?", average >= 90)`)}

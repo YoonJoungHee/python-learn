@@ -1,0 +1,31 @@
+<h3>if 단독</h3>
+${cb(`score = 75
+if score >= 60:
+    print("합격")`)}
+<h3>if - else</h3>
+${cb(`score = 45
+if score >= 60:
+    print("합격")
+else:
+    print("불합격")`)}
+<h3>if - elif - else</h3>
+${cb(`score = 82
+if score >= 80:
+    print("A")
+elif score >= 60:
+    print("B")
+else:
+    print("C")`)}
+<div class="tip-box"><strong>💡 들여쓰기</strong>스페이스 4칸으로 블록을 구분합니다. 틀리면 오류!</div>
+${eb(3,`score = 75
+if score >= 90:
+    grade = "A"
+elif score >= 80:
+    grade = "B"
+elif score >= 70:
+    grade = "C"
+elif score >= 60:
+    grade = "D"
+else:
+    grade = "F"
+print("점수:", score, "→ 학점:", grade)`)}

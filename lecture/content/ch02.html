@@ -1,0 +1,26 @@
+<h3>변수란?</h3>
+<p>변수는 데이터를 저장하는 <strong>이름표가 붙은 상자</strong>입니다. 값을 넣어두고 나중에 꺼내 쓸 수 있습니다.</p>
+${cb(`name = "김철수"        # 문자열(str)
+age = 17               # 정수(int)
+height = 172.5         # 실수(float)
+is_student = True      # 논리값(bool)
+print(name, age, height, is_student)`)}
+<h3>자료형 4가지</h3>
+<ul>
+  <li><strong>int</strong> — 정수: 17, -3, 0</li>
+  <li><strong>float</strong> — 실수: 3.14, -0.5</li>
+  <li><strong>str</strong> — 문자열: "안녕", 'Python'</li>
+  <li><strong>bool</strong> — 논리값: True, False</li>
+</ul>
+<h3>type()으로 자료형 확인</h3>
+${cb(`x = 42
+print(type(x))         # <class 'int'>
+y = "안녕"
+print(type(y))         # <class 'str'>`)}
+<div class="warn-box"><strong>⚠️ 주의</strong>변수 이름은 숫자로 시작할 수 없습니다.</div>
+${eb(1,`name = "나의이름"
+age = 0
+hobby = "취미"
+print("이름:", name)
+print("나이:", age)
+print("자료형:", type(age))`)}
