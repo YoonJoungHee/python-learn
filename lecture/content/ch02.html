@@ -1,26 +1,72 @@
-<h3>변수란?</h3>
-<p>변수는 데이터를 저장하는 <strong>이름표가 붙은 상자</strong>입니다. 값을 넣어두고 나중에 꺼내 쓸 수 있습니다.</p>
-${cb(`name = "김철수"        # 문자열(str)
-age = 17               # 정수(int)
-height = 172.5         # 실수(float)
-is_student = True      # 논리값(bool)
-print(name, age, height, is_student)`)}
-<h3>자료형 4가지</h3>
-<ul>
-  <li><strong>int</strong> — 정수: 17, -3, 0</li>
-  <li><strong>float</strong> — 실수: 3.14, -0.5</li>
-  <li><strong>str</strong> — 문자열: "안녕", 'Python'</li>
-  <li><strong>bool</strong> — 논리값: True, False</li>
-</ul>
-<h3>type()으로 자료형 확인</h3>
-${cb(`x = 42
-print(type(x))         # <class 'int'>
-y = "안녕"
-print(type(y))         # <class 'str'>`)}
-<div class="warn-box"><strong>⚠️ 주의</strong>변수 이름은 숫자로 시작할 수 없습니다.</div>
-${eb(1,`name = "나의이름"
-age = 0
-hobby = "취미"
-print("이름:", name)
-print("나이:", age)
-print("자료형:", type(age))`)}
+<h3>📦 변수(Variable)란?</h3>
+<p>변수는 데이터를 저장하는 <strong>이름표가 붙은 상자</strong>입니다. 값을 넣어두고 나중에 꺼내 쓸 수 있습니다. <code style="font-family:var(--mono)">=</code> 기호로 값을 저장합니다.</p>
+
+${cb(`name = "홍길동"     # 변수 name에 문자열 저장
+age = 17            # 변수 age에 정수 저장
+height = 172.5      # 변수 height에 실수 저장
+print(name, age, height)`)}
+
+<div class="tip-box"><strong>💡 변수 이름 규칙</strong>
+· 영문자, 숫자, 밑줄(_)만 사용 가능<br>
+· 숫자로 시작할 수 없음 (예: <code style="font-family:var(--mono)">1name</code> ❌)<br>
+· 대소문자 구분 (age ≠ Age)<br>
+· 파이썬 예약어 사용 불가 (if, for, True 등)</div>
+
+<h3>✏️ 실습 1 — 변수 만들고 출력해 보기</h3>
+<p>아래 코드를 보고 직접 입력한 후 실행해 보세요.</p>
+${cb(`school = "일산고"
+grade = 2
+gpa = 3.8
+print(school, grade, "학년")
+print(type(grade))`)}
+${eb(0,``)}
+
+<h3>🔢 산술 연산자</h3>
+<p>변수에 저장된 값으로 다양한 연산을 할 수 있습니다.</p>
+
+<div style="overflow-x:auto;margin:.875rem 0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+<table style="width:100%;border-collapse:collapse;font-size:13px">
+  <thead><tr style="background:var(--surface2)">
+    <th style="padding:8px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--accent);font-family:var(--sans)">연산자</th>
+    <th style="padding:8px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--accent);font-family:var(--sans)">의미</th>
+    <th style="padding:8px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--accent);font-family:var(--sans)">예시</th>
+    <th style="padding:8px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--accent);font-family:var(--sans)">결과</th>
+  </tr></thead>
+  <tbody style="color:var(--text2)">
+    <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 14px;font-family:var(--mono)">+</td><td style="padding:7px 14px">더하기</td><td style="padding:7px 14px;font-family:var(--mono)">10 + 3</td><td style="padding:7px 14px;color:var(--green);font-family:var(--mono)">13</td></tr>
+    <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 14px;font-family:var(--mono)">-</td><td style="padding:7px 14px">빼기</td><td style="padding:7px 14px;font-family:var(--mono)">10 - 3</td><td style="padding:7px 14px;color:var(--green);font-family:var(--mono)">7</td></tr>
+    <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 14px;font-family:var(--mono)">*</td><td style="padding:7px 14px">곱하기</td><td style="padding:7px 14px;font-family:var(--mono)">10 * 3</td><td style="padding:7px 14px;color:var(--green);font-family:var(--mono)">30</td></tr>
+    <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 14px;font-family:var(--mono)">**</td><td style="padding:7px 14px">거듭제곱</td><td style="padding:7px 14px;font-family:var(--mono)">2 ** 10</td><td style="padding:7px 14px;color:var(--green);font-family:var(--mono)">1024</td></tr>
+    <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 14px;font-family:var(--mono)">/</td><td style="padding:7px 14px">나누기 (실수)</td><td style="padding:7px 14px;font-family:var(--mono)">10 / 3</td><td style="padding:7px 14px;color:var(--green);font-family:var(--mono)">3.333...</td></tr>
+    <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 14px;font-family:var(--mono)">//</td><td style="padding:7px 14px">몫 (정수)</td><td style="padding:7px 14px;font-family:var(--mono)">10 // 3</td><td style="padding:7px 14px;color:var(--green);font-family:var(--mono)">3</td></tr>
+    <tr><td style="padding:7px 14px;font-family:var(--mono)">%</td><td style="padding:7px 14px">나머지</td><td style="padding:7px 14px;font-family:var(--mono)">10 % 3</td><td style="padding:7px 14px;color:var(--green);font-family:var(--mono)">1</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>✏️ 실습 2 — 변수와 연산자 함께 사용해 보기</h3>
+<p>아래 코드를 직접 입력하고 실행해 보세요.</p>
+${cb(`a = 10
+b = 3
+print(a + b)
+print(a ** b)
+print(a // b)
+print(a % b)`)}
+${eb(1,``)}
+
+<h3>🔄 복합 대입 연산자</h3>
+<p>변수의 값을 바꿀 때 자주 사용하는 축약 표현입니다.</p>
+${cb(`score = 100
+score = score + 10   # 기본 방식
+score += 10          # 축약 방식 (같은 의미)
+score -= 5           # score = score - 5
+score *= 2           # score = score * 2
+print(score)`)}
+
+<h3>✏️ 실습 3 — 복합 대입 연산자 사용해 보기</h3>
+${cb(`x = 50
+x += 20
+x -= 10
+x *= 2
+print(x)`)}
+${eb(2,``)}

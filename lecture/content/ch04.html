@@ -1,31 +1,39 @@
-<h3>if 단독</h3>
-${cb(`score = 75
-if score >= 60:
-    print("합격")`)}
-<h3>if - else</h3>
-${cb(`score = 45
-if score >= 60:
-    print("합격")
-else:
-    print("불합격")`)}
-<h3>if - elif - else</h3>
-${cb(`score = 82
-if score >= 80:
-    print("A")
-elif score >= 60:
-    print("B")
-else:
-    print("C")`)}
-<div class="tip-box"><strong>💡 들여쓰기</strong>스페이스 4칸으로 블록을 구분합니다. 틀리면 오류!</div>
-${eb(3,`score = 75
-if score >= 90:
-    grade = "A"
-elif score >= 80:
-    grade = "B"
-elif score >= 70:
-    grade = "C"
-elif score >= 60:
-    grade = "D"
-else:
-    grade = "F"
-print("점수:", score, "→ 학점:", grade)`)}
+<h3>⌨️ input() 함수</h3>
+<p>사용자로부터 키보드 입력을 받는 함수입니다. 입력받은 값은 항상 <strong>문자열(str)</strong>로 저장됩니다.</p>
+
+${cb(`name = input("이름을 입력하세요: ")
+print("안녕하세요,", name)`)}
+
+<div class="warn-box"><strong>⚠️ input()의 결과는 항상 str!</strong>숫자를 입력해도 문자열로 저장됩니다. 숫자로 계산하려면 반드시 형 변환이 필요합니다.</div>
+
+<h3>🔄 자료형 변환 — int(), float()</h3>
+<p>input()으로 받은 값을 숫자로 쓰려면 <code style="font-family:var(--mono)">int()</code> 또는 <code style="font-family:var(--mono)">float()</code>으로 변환해야 합니다.</p>
+${cb(`age = int(input("나이를 입력하세요: "))
+print(age + 1, "살이 되겠네요!")
+
+height = float(input("키를 입력하세요(cm): "))
+print(f"키: {height}cm")`)}
+
+<h3>✏️ 실습 1 — 두 수를 입력받아 합 구하기</h3>
+<p>아래 코드를 보고 직접 입력한 후 실행해 보세요.</p>
+${cb(`a = int(input("첫 번째 수: "))
+b = int(input("두 번째 수: "))
+print(f"{a} + {b} = {a + b}")`)}
+${eb(0,``)}
+
+<h3>📌 한 줄에 여러 값 입력 — split()</h3>
+<p>공백으로 구분된 여러 값을 한 번에 입력받을 때 <code style="font-family:var(--mono)">split()</code>을 사용합니다.</p>
+${cb(`a, b = input("두 수 입력: ").split()
+a = int(a)
+b = int(b)
+print(f"합: {a + b}, 차: {a - b}")`)}
+
+<div class="tip-box"><strong>💡 map()으로 더 간결하게</strong>
+${cb(`a, b = map(int, input("두 수 입력: ").split())
+print(a + b)`)}</div>
+
+<h3>✏️ 실습 2 — 이름과 나이를 입력받아 출력하기</h3>
+${cb(`name = input("이름: ")
+age = int(input("나이: "))
+print(f"안녕하세요! {name}님, {age}살이시군요.")`)}
+${eb(1,``)}
