@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>파이썬 자료형 분류 활동</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#0f1117;color:#e8eaf6;
+  font-family:'Nanum Gothic',sans-serif;
+  min-height:100vh;padding:1.5rem 1rem;
+}
+
+/* ── 헤더 ── */
+.page-title{font-size:1.3rem;font-weight:800;margin-bottom:.3rem}
+.page-title span{color:#4f8ef7}
+.page-desc{font-size:13px;color:#8892b0;margin-bottom:1.25rem;line-height:1.6}
+
+/* ── 점수 & 초기화 ── */
+.top-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:10px;margin-bottom:1.25rem;
+}
+.score-area{display:flex;align-items:center;gap:8px}
+.score-label{font-size:12px;color:#8892b0}
+.score-num{font-size:24px;font-weight:800;color:#e8eaf6}
+.score-total{font-size:13px;color:#8892b0}
+.btn-reset{
+  padding:7px 16px;border-radius:10px;
+  border:1px solid #2e3350;background:#1a1d27;
+  color:#8892b0;font-size:13px;font-weight:700;
+  cursor:pointer;font-family:'Nanum Gothic',sans-serif;
+  display:flex;align-items:center;gap:6px;transition:all .15s;
+}
+.btn-reset:hover{background:#22263a;color:#e8eaf6;border-color:#4a5272}
+
+/* ── 카드 풀 ── */
+.pool-wrap{
+  background:#1a1d27;border:1px solid #2e3350;border-radius:12px;
+  padding:14px 16px;margin-bottom:1.25rem;min-height:70px;
+}
+.pool-label{font-size:10px;font-weight:700;color:#4a5272;letter-spacing:.06em;margin-bottom:10px}
+.pool-cards{display:flex;flex-wrap:wrap;gap:8px;min-height:36px}
+
+/* ── 데이터 카드 ── */
+.data-card{
+  padding:7px 14px;border-radius:8px;
+  border:1px solid #2e3350;background:#22263a;
+  font-size:13px;font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+  color:#e8eaf6;cursor:grab;
+  user-select:none;
+  transition:transform .12s,box-shadow .12s,opacity .15s;
+  display:inline-flex;align-items:center;
+}
+.data-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.4);border-color:#4a5272}
+.data-card:active{cursor:grabbing;opacity:.6}
+.data-card.dragging{opacity:.3;transform:scale(.95)}
+.data-card.correct{
+  cursor:default;
+  border-width:1.5px;
+}
+.data-card.wrong{animation:shake .35s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}60%{transform:translateX(5px)}}
+
+/* ── 드롭존 그리드 ── */
+.zones-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:12px;
+}
+
+/* ── 드롭존 ── */
+.zone{
+  border-radius:12px;border:1.5px dashed #2e3350;
+  padding:12px;min-height:200px;
+  transition:border-color .15s,background .15s;
+  display:flex;flex-direction:column;
+}
+.zone.drag-over{border-style:solid}
+.zone-hd{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #2e3350}
+.zone-type{font-size:15px;font-weight:800;font-family:'JetBrains Mono',monospace}
+.zone-hint{font-size:11px;color:#8892b0;margin-top:3px}
+.zone-example{font-size:10px;margin-top:4px;font-family:'JetBrains Mono',monospace;opacity:.6}
+.zone-body{display:flex;flex-direction:column;gap:7px;flex:1}
+.zone-empty{
+  font-size:11px;color:#4a5272;text-align:center;
+  padding:20px 0;border:1px dashed #22263a;border-radius:8px;
+  margin-top:4px;
+}
+
+/* 자료형별 색상 */
+.zone-int   {border-color:#1e4d8c}
+.zone-int   .zone-type{color:#60a5fa}
+.zone-int   .zone-empty{border-color:#1e3a6e}
+.zone-int.drag-over{background:rgba(96,165,250,.05);border-color:#60a5fa}
+
+.zone-float {border-color:#1a5c2e}
+.zone-float .zone-type{color:#34d399}
+.zone-float .zone-empty{border-color:#143d1e}
+.zone-float.drag-over{background:rgba(52,211,153,.05);border-color:#34d399}
+
+.zone-str   {border-color:#4a2080}
+.zone-str   .zone-type{color:#a78bfa}
+.zone-str   .zone-empty{border-color:#321560}
+.zone-str.drag-over{background:rgba(167,139,250,.05);border-color:#a78bfa}
+
+.zone-bool  {border-color:#7a4010}
+.zone-bool  .zone-type{color:#fb923c}
+.zone-bool  .zone-empty{border-color:#502a08}
+.zone-bool.drag-over{background:rgba(251,146,60,.05);border-color:#fb923c}
+
+/* 카드 정답 색상 */
+.data-card.correct.int  {background:#0d2244;border-color:#60a5fa;color:#93c5fd}
+.data-card.correct.float{background:#0a2e1a;border-color:#34d399;color:#6ee7b7}
+.data-card.correct.str  {background:#1a0d3a;border-color:#a78bfa;color:#c4b5fd}
+.data-card.correct.bool {background:#2e1a08;border-color:#fb923c;color:#fdba74}
+
+/* ── 피드백 배너 ── */
+.feedback{
+  margin-top:1.25rem;padding:14px 18px;border-radius:12px;
+  font-size:14px;font-weight:700;text-align:center;display:none;
+  line-height:1.6;
+}
+.feedback.show{display:block}
+.feedback.done{background:#0a2e1a;color:#34d399;border:1px solid #1a5c2e}
+
+/* ── 범례 ── */
+.legend{
+  margin-bottom:1rem;padding:12px 16px;
+  background:#1a1d27;border:1px solid #2e3350;border-radius:10px;
+  display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+}
+.legend-title{font-size:11px;color:#4a5272;font-weight:700;letter-spacing:.05em;width:100%}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#8892b0}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* ── 진행바 ── */
+.progress-wrap{margin-bottom:1.25rem}
+.progress-bar{height:6px;background:#22263a;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#4f8ef7,#a78bfa);border-radius:3px;transition:width .4s ease;width:0%}
+.progress-label{font-size:11px;color:#4a5272;margin-top:5px;text-align:right}
+
+/* ── 모달 (완료) ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);
+  display:none;align-items:center;justify-content:center;z-index:100;
+}
+.modal-overlay.show{display:flex}
+.modal{
+  background:#1a1d27;border:1px solid #2e3350;border-radius:16px;
+  padding:2rem;text-align:center;max-width:340px;width:90%;
+}
+.modal-emoji{font-size:3rem;margin-bottom:.75rem}
+.modal-title{font-size:1.3rem;font-weight:800;margin-bottom:.5rem;color:#e8eaf6}
+.modal-desc{font-size:13px;color:#8892b0;line-height:1.7;margin-bottom:1.25rem}
+.modal-btn{
+  padding:10px 28px;border-radius:10px;
+  background:#4f8ef7;border:none;color:#fff;
+  font-size:14px;font-weight:700;cursor:pointer;
+  font-family:'Nanum Gothic',sans-serif;transition:background .15s;
+}
+.modal-btn:hover{background:#3a7de8}
+
+/* ── 스크롤바 ── */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:#2e3350;border-radius:3px}
+</style>
+</head>
+<body>
+<div style="margin-bottom:1rem;display:flex;align-items:center;gap:12px">
+  <a href="../index.html" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:#1a1d27;border:1px solid #2e3350;color:#8892b0;font-size:12px;font-weight:700;font-family:'Nanum Gothic',sans-serif;text-decoration:none;transition:all .15s" onmouseover="this.style.color='#e8eaf6';this.style.borderColor='#4a5272'" onmouseout="this.style.color='#8892b0';this.style.borderColor='#2e3350'">← 홈으로</a>
+  <span style="font-size:11px;color:#4a5272;font-family:'Nanum Gothic',sans-serif">포켓몬 파이썬 실습 홈</span>
+</div>
+
+<!-- 헤더 -->
+<div class="page-title">파이썬 <span>자료형</span> 분류 활동</div>
+<div class="page-desc">
+  아래 카드를 드래그해서 알맞은 자료형 칸에 놓으세요.<br>
+  맞으면 ✓ 고정되고, 틀리면 다시 돌아옵니다.
+</div>
+
+<!-- 상단 바 -->
+<div class="top-bar">
+  <div class="score-area">
+    <span class="score-label">맞힌 개수</span>
+    <span class="score-num" id="scoreNum">0</span>
+    <span class="score-total" id="scoreTotal">/ 0</span>
+  </div>
+  <button class="btn-reset" onclick="resetAll()">↺ &nbsp;초기화</button>
+</div>
+
+<!-- 진행바 -->
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel">0 / 0 완료</div>
+</div>
+
+<!-- 범례 -->
+<div class="legend">
+  <div class="legend-title">자료형 색상 안내</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div>int — 정수</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div>float — 실수</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>str — 문자열</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fb923c"></div>bool — 논리값</div>
+</div>
+
+<!-- 카드 풀 -->
+<div class="pool-wrap">
+  <div class="pool-label">📋 데이터 카드 — 여기서 카드를 가져가세요</div>
+  <div class="pool-cards" id="poolCards"></div>
+</div>
+
+<!-- 드롭존 -->
+<div class="zones-grid" id="zonesGrid"></div>
+
+<!-- 피드백 -->
+<div class="feedback" id="feedback"></div>
+
+<!-- 완료 모달 -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-emoji">🎉</div>
+    <div class="modal-title">완벽해요!</div>
+    <div class="modal-desc">모든 카드를 올바른 자료형에 분류했습니다!<br>파이썬 자료형 마스터 🏆</div>
+    <button class="modal-btn" onclick="resetAll()">다시 풀기</button>
+  </div>
+</div>
+
+<script>
+/* ══ 데이터 ══ */
+const TYPES = [
+  {
+    key:'int', label:'int', hint:'정수 (소수점 없는 숫자)',
+    example:'예) 0, 1, -5, 100',
+    color:'#60a5fa',
+    cards:['0', '17', '-3', '100', '2025', '-100']
+  },
+  {
+    key:'float', label:'float', hint:'실수 (소수점 있는 숫자)',
+    example:'예) 3.14, -0.5, 2.0',
+    color:'#34d399',
+    cards:['3.14', '-0.5', '2.0', '99.9', '0.001', '172.5']
+  },
+  {
+    key:'str', label:'str', hint:'문자열 (따옴표로 감싼 텍스트)',
+    example:'예) "안녕", "Python"',
+    color:'#a78bfa',
+    cards:['"안녕"', '"Python"', '"17"', '"True"', '"3.14"', '"hello"']
+  },
+  {
+    key:'bool', label:'bool', hint:'논리값 (참 또는 거짓)',
+    example:'예) True, False',
+    color:'#fb923c',
+    cards:['True', 'False']
+  }
+];
+
+const ALL_CARDS = TYPES.flatMap(t => t.cards.map(v => ({value:v, type:t.key})));
+let placed = {};   // value → typeKey (정답인 것만)
+let score = 0;
+
+/* ══ 유틸 ══ */
+function cardId(v){ return 'card-' + v.replace(/[^a-zA-Z0-9가-힣]/g,'_'); }
+
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+/* ══ 카드 생성 ══ */
+function createCard(item, inPool=true){
+  const div = document.createElement('div');
+  div.className = 'data-card';
+  div.id = cardId(item.value);
+  div.textContent = item.value;
+  div.draggable = true;
+  div.dataset.value = item.value;
+  div.dataset.type = item.type;
+
+  // 드래그 이벤트
+  div.addEventListener('dragstart', e => {
+    if(div.classList.contains('correct')){ e.preventDefault(); return; }
+    e.dataTransfer.setData('text/plain', item.value);
+    setTimeout(()=>div.classList.add('dragging'), 0);
+  });
+  div.addEventListener('dragend', ()=>div.classList.remove('dragging'));
+
+  // 터치 이벤트
+  div.addEventListener('touchstart', touchStart, {passive:true});
+  div.addEventListener('touchmove',  touchMove,  {passive:false});
+  div.addEventListener('touchend',   touchEnd);
+  return div;
+}
+
+/* ══ 풀 빌드 ══ */
+function buildPool(){
+  const pool = document.getElementById('poolCards');
+  pool.innerHTML = '';
+  const remaining = ALL_CARDS.filter(c => !placed[c.value]);
+  shuffle(remaining).forEach(item => pool.appendChild(createCard(item)));
+}
+
+/* ══ 존 빌드 ══ */
+function buildZones(){
+  const container = document.getElementById('zonesGrid');
+  container.innerHTML = '';
+
+  TYPES.forEach(t => {
+    const zone = document.createElement('div');
+    zone.className = `zone zone-${t.key}`;
+    zone.id = 'zone-' + t.key;
+    zone.innerHTML = `
+      <div class="zone-hd">
+        <div class="zone-type">${t.label}</div>
+        <div class="zone-hint">${t.hint}</div>
+        <div class="zone-example">${t.example}</div>
+      </div>
+      <div class="zone-body" id="zbody-${t.key}">
+        <div class="zone-empty" id="zempty-${t.key}">여기에 드래그하세요</div>
+      </div>`;
+
+    // 드래그 오버/드롭
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      zone.classList.add('drag-over');
+    });
+    zone.addEventListener('dragleave', e => {
+      if(!zone.contains(e.relatedTarget)) zone.classList.remove('drag-over');
+    });
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      const value = e.dataTransfer.getData('text/plain');
+      dropCard(value, t.key);
+    });
+    container.appendChild(zone);
+  });
+
+  // 이미 맞힌 카드 복원
+  Object.entries(placed).forEach(([value, typeKey]) => {
+    const item = ALL_CARDS.find(c => c.value === value);
+    placeInZone(item, typeKey, true, true);
+  });
+}
+
+/* ══ 드롭 처리 ══ */
+function dropCard(value, targetType){
+  const item = ALL_CARDS.find(c => c.value === value);
+  if(!item || placed[value]) return;
+
+  const isCorrect = item.type === targetType;
+
+  // 풀에서 카드 제거
+  document.getElementById(cardId(value))?.remove();
+
+  if(isCorrect){
+    placed[value] = targetType;
+    score++;
+    placeInZone(item, targetType, true, false);
+    updateScore();
+    checkDone();
+  } else {
+    // 틀린 경우: 존에 잠깐 표시 후 풀로 복귀
+    placeInZone(item, targetType, false, false);
+    setTimeout(()=>{
+      document.getElementById('placed-'+cardId(item.value))?.remove();
+      // 빈칸 복원 체크
+      const body = document.getElementById('zbody-'+targetType);
+      const empty = document.getElementById('zempty-'+targetType);
+      if(body && empty && !body.querySelector('.correct')) empty.style.display='';
+      // 풀에 복귀
+      const card = createCard(item);
+      document.getElementById('poolCards').appendChild(card);
+    }, 700);
+  }
+}
+
+/* ══ 존에 카드 배치 ══ */
+function placeInZone(item, typeKey, isCorrect, isRestore){
+  const body  = document.getElementById('zbody-'+typeKey);
+  const empty = document.getElementById('zempty-'+typeKey);
+  if(empty) empty.style.display = 'none';
+
+  const card = document.createElement('div');
+  card.className = 'data-card' + (isCorrect ? ` correct ${item.type}` : ' wrong');
+  card.id = 'placed-' + cardId(item.value);
+  card.textContent = (isCorrect ? '✓ ' : '✗ ') + item.value;
+  if(isCorrect) card.style.setProperty('--c', TYPES.find(t=>t.key===item.type)?.color||'#fff');
+  body.appendChild(card);
+}
+
+/* ══ 점수 / 진행바 ══ */
+function updateScore(){
+  const total = ALL_CARDS.length;
+  const done  = Object.keys(placed).length;
+  document.getElementById('scoreNum').textContent = done;
+  document.getElementById('scoreTotal').textContent = '/ ' + total;
+  const pct = total ? (done/total*100).toFixed(0) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = done + ' / ' + total + ' 완료';
+}
+
+function checkDone(){
+  if(Object.keys(placed).length === ALL_CARDS.length){
+    setTimeout(()=>{
+      document.getElementById('modalOverlay').classList.add('show');
+    }, 600);
+  }
+}
+
+/* ══ 초기화 ══ */
+function resetAll(){
+  placed = {}; score = 0;
+  document.getElementById('modalOverlay').classList.remove('show');
+  buildPool();
+  buildZones();
+  updateScore();
+  document.getElementById('feedback').className = 'feedback';
+}
+
+/* ══ 터치 드래그 ══ */
+let touchCard=null, touchClone=null, touchOffX=0, touchOffY=0;
+
+function touchStart(e){
+  const card = e.currentTarget;
+  if(card.classList.contains('correct')) return;
+  touchCard = card;
+  const r = card.getBoundingClientRect();
+  touchOffX = e.touches[0].clientX - r.left;
+  touchOffY = e.touches[0].clientY - r.top;
+  touchClone = card.cloneNode(true);
+  touchClone.style.cssText = `
+    position:fixed;z-index:9999;pointer-events:none;
+    opacity:.85;width:${r.width}px;
+    left:${r.left}px;top:${r.top}px;margin:0;
+  `;
+  document.body.appendChild(touchClone);
+  card.style.opacity = '.3';
+}
+function touchMove(e){
+  if(!touchClone) return;
+  e.preventDefault();
+  const t = e.touches[0];
+  touchClone.style.left = (t.clientX - touchOffX) + 'px';
+  touchClone.style.top  = (t.clientY - touchOffY) + 'px';
+}
+function touchEnd(e){
+  if(!touchClone || !touchCard){ touchCard=null; return; }
+  touchClone.remove(); touchClone = null;
+  touchCard.style.opacity = '';
+  const t = e.changedTouches[0];
+  const el = document.elementFromPoint(t.clientX, t.clientY);
+  const zone = el?.closest('.zone');
+  if(zone){
+    const typeKey = zone.id.replace('zone-','');
+    dropCard(touchCard.dataset.value, typeKey);
+  }
+  touchCard = null;
+}
+
+/* ══ 초기 실행 ══ */
+document.getElementById('scoreTotal').textContent = '/ ' + ALL_CARDS.length;
+buildPool();
+buildZones();
+updateScore();
+</script>
+</body>
+</html>

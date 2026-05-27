@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>조건문 구조 완성하기</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:#0f1117;color:#e8eaf6;font-family:'Nanum Gothic',sans-serif;display:flex;flex-direction:column}
+.header{flex-shrink:0;height:50px;background:rgba(15,17,23,.97);border-bottom:1px solid #2e3350;display:flex;align-items:center;padding:0 1rem;gap:10px}
+.h-back{color:#8892b0;font-size:13px;font-weight:700;text-decoration:none}.h-back:hover{color:#e8eaf6}
+.h-div{width:1px;height:18px;background:#2e3350}
+.h-title{font-size:14px;font-weight:700;color:#8892b0;flex:1}
+.score-chip{font-size:15px;font-weight:800;color:#4f8ef7;background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.25);border-radius:8px;padding:2px 10px}
+.tabbar{flex-shrink:0;height:42px;background:#13161f;border-bottom:1px solid #2e3350;display:flex;padding:0 .75rem;gap:2px}
+.tbtn{padding:0 14px;font-size:14px;font-weight:700;color:#4a5272;border:none;background:none;cursor:pointer;font-family:'Nanum Gothic',sans-serif;border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:color .15s}
+.tbtn:hover{color:#8892b0}.tbtn.on{color:#4f8ef7;border-bottom-color:#4f8ef7}
+.tbtn.done{color:#34d399}.tbtn.done.on{border-bottom-color:#34d399}
+.t-dot{width:18px;height:18px;border-radius:50%;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;background:#22263a;color:#4a5272}
+.tbtn.on .t-dot{background:rgba(79,142,247,.2);color:#4f8ef7}
+.tbtn.done .t-dot{background:rgba(52,211,153,.2);color:#34d399}
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column;padding:.5rem .75rem;gap:.5rem}
+.pool-wrap{flex-shrink:0;background:#1a1d27;border:1px solid #2e3350;border-radius:10px;padding:.5rem .875rem}
+.pool-lbl{font-size:12px;font-weight:700;color:#4a5272;letter-spacing:.04em;margin-bottom:.5rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.leg{display:inline-flex;align-items:center;gap:4px;font-size:12px}
+.ld{width:8px;height:8px;border-radius:50%}
+.pool-cards{display:flex;flex-wrap:wrap;gap:7px;min-height:32px;align-items:center}
+.dc{padding:5px 12px;border-radius:7px;border:1px solid #2e3350;background:#22263a;font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;font-variant-ligatures:none;font-feature-settings:'liga' 0,'calt' 0;color:#e8eaf6;cursor:grab;user-select:none;white-space:nowrap}
+.dc:hover{border-color:#4a5272}.dc.dragging{opacity:.3}
+.dc-cond{border-color:#fbbf24;color:#fde68a;background:#1e1800}
+.dc-true{border-color:#34d399;color:#6ee7b7;background:#081a10}
+.dc-false{border-color:#f87171;color:#fca5a5;background:#1a0808}
+.prob-grid{flex:1;overflow:hidden;display:grid;gap:.5rem}
+.pg3{grid-template-columns:repeat(3,1fr)}.pg2{grid-template-columns:repeat(2,1fr)}
+.prob-card{background:#1a1d27;border:1px solid #2e3350;border-radius:10px;padding:.5rem .75rem;display:flex;flex-direction:column;gap:.25rem;overflow:hidden;transition:border-color .3s}
+.prob-card.done{border-color:#34d399}
+.p-num{font-size:12px;font-weight:700;color:#4a5272;letter-spacing:.04em}
+.p-title{font-size:15px;color:#e8eaf6;line-height:1.6;font-weight:400}
+.p-title strong{font-weight:800;font-size:16px}
+
+.code-struct{flex:1;background:#0d1117;border:1px solid #22263a;border-radius:8px;padding:.5rem .75rem;font-family:'JetBrains Mono',monospace;font-size:13px;font-variant-ligatures:none;font-feature-settings:'liga' 0,'calt' 0;display:flex;flex-direction:column;justify-content:space-evenly;overflow:hidden}
+.cl{display:flex;align-items:center;gap:5px;padding:1px 0}
+.ck{color:#cba6f7;font-weight:600;white-space:nowrap}
+.ct{color:#cdd6f4;white-space:nowrap}
+.cc{color:#585b70;font-size:11px;white-space:nowrap}
+.i1{display:inline-block;width:18px;flex-shrink:0}
+.slot{display:inline-flex;align-items:center;justify-content:center;min-width:90px;height:26px;padding:0 8px;border:1.5px dashed #2e3350;border-radius:6px;background:#13161f;font-size:12px;font-family:'Nanum Gothic',sans-serif;font-weight:700;cursor:default;flex-shrink:0;white-space:nowrap;font-variant-ligatures:none;font-feature-settings:'liga' 0,'calt' 0}
+.slot.over{border-color:#4f8ef7;background:#0d1829;border-style:solid}
+.slot.ok{border-style:solid;border-color:#34d399;background:#081a10;color:#34d399;font-family:'JetBrains Mono',monospace;font-size:12px;min-width:auto}
+.slot.ng{border-style:solid;border-color:#f87171;background:#1a0808;color:#f87171;font-family:'JetBrains Mono',monospace;font-size:12px;animation:shake .3s ease}
+.sh-c{color:#fbbf24}.sh-t{color:#34d399}.sh-f{color:#f87171}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.btn-row{flex-shrink:0;display:flex;gap:8px}
+.btn-c{padding:7px 16px;border-radius:8px;border:1px solid #2e3350;background:#1a1d27;color:#8892b0;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nanum Gothic',sans-serif}
+.btn-c:hover{background:#22263a;color:#e8eaf6;border-color:#4a5272}
+.btn-reset{margin-left:auto}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:200}
+.modal-bg.show{display:flex}
+.modal{background:#1a1d27;border:1px solid #2e3350;border-radius:16px;padding:2rem 2.5rem;text-align:center;max-width:340px;width:90%}
+.me{font-size:3rem;margin-bottom:.75rem}.mt{font-size:1.2rem;font-weight:800;margin-bottom:.4rem}
+.md{font-size:13px;color:#8892b0;line-height:1.7;margin-bottom:1.25rem}
+.mbtns{display:flex;gap:8px}
+.mbtn{flex:1;padding:9px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nanum Gothic',sans-serif}
+.mbtn-p{background:#4f8ef7;border:none;color:#fff}.mbtn-p:hover{background:#3a7de8}
+.mbtn-s{background:#1a1d27;border:1px solid #2e3350;color:#8892b0}.mbtn-s:hover{border-color:#4f8ef7;color:#4f8ef7}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#2e3350;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="header">
+  <a class="h-back" href="../index.html">← 홈</a>
+  <div class="h-div"></div>
+  <div class="h-title">조건문 구조 완성하기</div>
+  <div style="font-size:13px;color:#8892b0">맞힌 슬롯 <span class="score-chip" id="scoreChip">0/0</span></div>
+</div>
+<div class="tabbar">
+  <button class="tbtn on" id="tab0" onclick="go(0)">if 단독 <span class="t-dot" id="td0">3</span></button>
+  <button class="tbtn"    id="tab1" onclick="go(1)">if / else <span class="t-dot" id="td1">3</span></button>
+  <button class="tbtn"    id="tab2" onclick="go(2)">if / elif / else <span class="t-dot" id="td2">2</span></button>
+</div>
+<div class="main">
+  <div class="pool-wrap">
+    <div class="pool-lbl">📋 드래그해서 빈칸에 놓으세요
+      <span class="leg"><span class="ld" style="background:#fbbf24"></span>조건식</span>
+      <span class="leg"><span class="ld" style="background:#34d399"></span>참(True)일 때</span>
+      <span class="leg"><span class="ld" style="background:#f87171"></span>거짓(False)일 때</span>
+    </div>
+    <div class="pool-cards" id="poolCards"></div>
+  </div>
+  <div class="prob-grid pg3" id="probGrid"></div>
+  <div class="btn-row">
+    <button class="btn-c" onclick="showAns()">정답 보기</button>
+    <button class="btn-c btn-reset" onclick="resetCur()">↺ 초기화</button>
+  </div>
+</div>
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="me" id="mEmoji">🎉</div><div class="mt" id="mTitle"></div>
+    <div class="md" id="mDesc"></div>
+    <div class="mbtns">
+      <button class="mbtn mbtn-s" onclick="closeModal()">계속 풀기</button>
+      <button class="mbtn mbtn-p" id="mNext" onclick="nextTab()">다음 유형 →</button>
+    </div>
+  </div>
+</div>
+<script>
+/* ════ 상수 정의 ════ */
+
+var sc60 = 'score >= 60';
+
+var sc80 = 'score >= 80';
+
+var age19 = 'age >= 19';
+
+var num2 = 'num % 2 == 0';
+
+var mon1500 = 'money >= 1500';
+
+var num0 = 'num > 0';
+
+var mon9 = 'month >= 9';
+
+var mon6 = 'month >= 6';
+
+var sc60w  = 'score > 60';
+var age19w = 'age > 19';
+var odd    = '"홀수입니다"';
+var num0w  = 'num >= 0';
+var pass2  = '"통과"';
+var sc90   = 'score >= 90';
+var win    = '"겨울"';
+
+var mon1500w = 'money > 1500';
+
+var sc70 = 'score >= 70';
+
+var pass = '"합격"';
+
+var fail = '"불합격"';
+
+var adult = '"성인입니다"';
+
+var even = '"짝수입니다"';
+
+var ride = '"탑승 가능"';
+
+var noride = '"잔액 부족"';
+
+var pos = '"양수"';
+
+var neg = '"음수 또는 0"';
+
+var grA = '"A"';
+
+var grB = '"B"';
+
+var grC = '"C"';
+
+var fall = '"가을"';
+
+var sum = '"여름"';
+
+var spr = '"봄/겨울"';
+
+var zero = '"0"';
+
+var grD = '"D"';
+
+
+/* ════ 탭 데이터 ════ */
+var TABS = [
+  /* ── Tab 0: if 단독 ── */
+  {
+    cols: 3,
+    pool:[
+      {v:sc60,  cls:'dc-cond'}, {v:age19, cls:'dc-cond'}, {v:num2,  cls:'dc-cond'},
+      {v:pass,  cls:'dc-true'}, {v:adult, cls:'dc-true'},  {v:even,  cls:'dc-true'},
+      {v:sc60w, cls:'dc-cond'}, {v:fail,  cls:'dc-true'},
+      {v:age19w,cls:'dc-cond'}, {v:odd,   cls:'dc-true'},
+    ],
+    probs:[
+      {
+        num:'문제 1',
+        title:'<strong>점수(score)가 60 이상이면</strong> <strong>"합격"을 출력</strong>하는 조건문을 완성하세요.',
+        slots:[{id:'t0p0s0',ans:sc60,cls:'dc-cond',hint:'조건식'},{id:'t0p0s1',ans:pass,cls:'dc-true',hint:'True일 때'}],
+        lines:[
+          {t:'if',  sid:'t0p0s0', cm:''},
+          {t:'in1', sid:'t0p0s1', cm:'# True일 때'},
+        ]
+      },
+      {
+        num:'문제 2',
+        title:'<strong>나이(age)가 19 이상이면</strong> <strong>"성인입니다"를 출력</strong>하는 조건문을 완성하세요.',
+        slots:[{id:'t0p1s0',ans:age19,cls:'dc-cond',hint:'조건식'},{id:'t0p1s1',ans:adult,cls:'dc-true',hint:'True일 때'}],
+        lines:[
+          {t:'if',  sid:'t0p1s0', cm:''},
+          {t:'in1', sid:'t0p1s1', cm:''},
+        ]
+      },
+      {
+        num:'문제 3',
+        title:'<strong>숫자(num)를 2로 나눈 나머지가 0이면</strong> <strong>"짝수입니다"를 출력</strong>하는 조건문을 완성하세요.',
+        slots:[{id:'t0p2s0',ans:num2,cls:'dc-cond',hint:'조건식'},{id:'t0p2s1',ans:even,cls:'dc-true',hint:'True일 때'}],
+        lines:[
+          {t:'if',  sid:'t0p2s0', cm:'# 나머지==0'},
+          {t:'in1', sid:'t0p2s1', cm:''},
+        ]
+      },
+    ]
+  },
+  /* ── Tab 1: if / else ── */
+  {
+    cols: 3,
+    pool:[
+      {v:sc60,    cls:'dc-cond'},  {v:mon1500, cls:'dc-cond'}, {v:num0,   cls:'dc-cond'},
+      {v:pass,    cls:'dc-true'},  {v:ride,    cls:'dc-true'},  {v:pos,    cls:'dc-true'},
+      {v:fail,    cls:'dc-false'}, {v:noride,  cls:'dc-false'}, {v:neg,    cls:'dc-false'},
+      {v:mon1500w,cls:'dc-cond'},  {v:zero,    cls:'dc-false'},
+      {v:num0w,   cls:'dc-cond'},  {v:pass2,   cls:'dc-true'},
+    ],
+    probs:[
+      {
+        num:'문제 4',
+        title:'<strong>점수(score)가 60 이상이면</strong> <strong>"합격"을 출력</strong>, 아니면 <strong>"불합격"을 출력</strong>하는 조건문을 완성하세요.',
+        slots:[
+          {id:'t1p0s0',ans:sc60,cls:'dc-cond', hint:'조건식'},
+          {id:'t1p0s1',ans:pass,cls:'dc-true',  hint:'True일 때'},
+          {id:'t1p0s2',ans:fail,cls:'dc-false', hint:'False일 때'},
+        ],
+        lines:[
+          {t:'if',   sid:'t1p0s0',cm:''},
+          {t:'in1',  sid:'t1p0s1',cm:'# True'},
+          {t:'else'},
+          {t:'in1',  sid:'t1p0s2',cm:'# False'},
+        ]
+      },
+      {
+        num:'문제 5',
+        title:'<strong>잔액(money)이 1500 이상이면</strong> <strong>"탑승 가능"을 출력</strong>, 아니면 <strong>"잔액 부족"을 출력</strong>하는 조건문을 완성하세요.',
+        slots:[
+          {id:'t1p1s0',ans:mon1500,cls:'dc-cond', hint:'조건식'},
+          {id:'t1p1s1',ans:ride,   cls:'dc-true',  hint:'True일 때'},
+          {id:'t1p1s2',ans:noride, cls:'dc-false', hint:'False일 때'},
+        ],
+        lines:[
+          {t:'if',   sid:'t1p1s0',cm:''},
+          {t:'in1',  sid:'t1p1s1',cm:''},
+          {t:'else'},
+          {t:'in1',  sid:'t1p1s2',cm:''},
+        ]
+      },
+      {
+        num:'문제 6',
+        title:'<strong>숫자(num)가 0보다 크면</strong> <strong>"양수"를 출력</strong>, 아니면 <strong>"음수 또는 0"을 출력</strong>하는 조건문을 완성하세요.',
+        slots:[
+          {id:'t1p2s0',ans:num0,cls:'dc-cond', hint:'조건식'},
+          {id:'t1p2s1',ans:pos, cls:'dc-true',  hint:'True일 때'},
+          {id:'t1p2s2',ans:neg, cls:'dc-false', hint:'False일 때'},
+        ],
+        lines:[
+          {t:'if',   sid:'t1p2s0',cm:''},
+          {t:'in1',  sid:'t1p2s1',cm:''},
+          {t:'else'},
+          {t:'in1',  sid:'t1p2s2',cm:''},
+        ]
+      },
+    ]
+  },
+  /* ── Tab 2: if / elif / else ── */
+  {
+    cols: 2,
+    pool:[
+      {v:sc80,  cls:'dc-cond'}, {v:sc60,  cls:'dc-cond'},
+      {v:mon9,  cls:'dc-cond'}, {v:mon6,  cls:'dc-cond'},
+      {v:grA,   cls:'dc-true'}, {v:grB,   cls:'dc-true'}, {v:grC,   cls:'dc-false'},
+      {v:fall,  cls:'dc-true'}, {v:sum,   cls:'dc-true'}, {v:spr,   cls:'dc-false'},
+      {v:sc70,  cls:'dc-cond'}, {v:grD,   cls:'dc-false'},
+      {v:sc90,  cls:'dc-cond'}, {v:win,   cls:'dc-false'},
+    ],
+    probs:[
+      {
+        num:'문제 7',
+        title:'<strong>점수(score)가 80 이상이면</strong> <strong>"A"를 출력</strong>, <strong>60 이상이면</strong> <strong>"B"를 출력</strong>, 나머지는 <strong>"C"를 출력</strong>하는 조건문을 완성하세요.',
+        slots:[
+          {id:'t2p0s0',ans:sc80,cls:'dc-cond', hint:'조건1'},
+          {id:'t2p0s1',ans:grA, cls:'dc-true',  hint:'출력'},
+          {id:'t2p0s2',ans:sc60,cls:'dc-cond', hint:'조건2'},
+          {id:'t2p0s3',ans:grB, cls:'dc-true',  hint:'출력'},
+          {id:'t2p0s4',ans:grC, cls:'dc-false', hint:'출력'},
+        ],
+        lines:[
+          {t:'if',   sid:'t2p0s0',cm:'# 80점 이상'},
+          {t:'in1',  sid:'t2p0s1',cm:''},
+          {t:'elif', sid:'t2p0s2',cm:'# 60점 이상'},
+          {t:'in1',  sid:'t2p0s3',cm:''},
+          {t:'else'},
+          {t:'in1',  sid:'t2p0s4',cm:'# 나머지'},
+        ]
+      },
+      {
+        num:'문제 8',
+        title:'<strong>월(month)이 9 이상이면</strong> <strong>"가을"을 출력</strong>, <strong>6 이상이면</strong> <strong>"여름"을 출력</strong>, 나머지는 <strong>"봄/겨울"을 출력</strong>하는 조건문을 완성하세요.',
+        slots:[
+          {id:'t2p1s0',ans:mon9,cls:'dc-cond', hint:'조건1'},
+          {id:'t2p1s1',ans:fall,cls:'dc-true',  hint:'출력'},
+          {id:'t2p1s2',ans:mon6,cls:'dc-cond', hint:'조건2'},
+          {id:'t2p1s3',ans:sum, cls:'dc-true',  hint:'출력'},
+          {id:'t2p1s4',ans:spr, cls:'dc-false', hint:'출력'},
+        ],
+        lines:[
+          {t:'if',   sid:'t2p1s0',cm:''},
+          {t:'in1',  sid:'t2p1s1',cm:''},
+          {t:'elif', sid:'t2p1s2',cm:''},
+          {t:'in1',  sid:'t2p1s3',cm:''},
+          {t:'else'},
+          {t:'in1',  sid:'t2p1s4',cm:''},
+        ]
+      },
+    ]
+  },
+];
+
+/* ════ 상태 ════ */
+var STATE = TABS.map(function(){ return {}; });
+var cur = 0;
+
+function totalSlots(){
+  return TABS.reduce(function(s,tab){ return s+tab.probs.reduce(function(s2,p){ return s2+p.slots.length; },0); },0);
+}
+function doneSlots(){
+  return TABS.reduce(function(s,tab,ti){
+    return s+tab.probs.reduce(function(s2,p){
+      return s2+p.slots.filter(function(sl){ return STATE[ti][sl.id]; }).length;
+    },0);
+  },0);
+}
+function updScore(){ document.getElementById('scoreChip').textContent=doneSlots()+'/'+totalSlots(); }
+
+/* ════ 탭 전환 ════ */
+function go(idx){
+  cur=idx;
+  document.querySelectorAll('.tbtn').forEach(function(b,i){ b.classList.toggle('on',i===idx); });
+  buildPool(idx);
+  buildGrid(idx);
+  updDots();
+  updScore();
+}
+
+/* ════ 카드 풀 ════ */
+function buildPool(ti){
+  var pool=document.getElementById('poolCards');
+  pool.innerHTML='';
+  var tab=TABS[ti];
+  var st=STATE[ti];
+
+  // 필요한 정답 카드 수 계산
+  var needed={};
+  tab.probs.forEach(function(p){
+    p.slots.forEach(function(sl){
+      if(!st[sl.id]) needed[sl.ans]=(needed[sl.ans]||0)+1;
+    });
+  });
+
+  // 카드 풀 셔플 — 매번 무작위 순서
+  var shuffled = tab.pool.slice().sort(function(){ return Math.random()-0.5; });
+
+  var shownCnt={};
+  var shownOff=new Set();
+
+  shuffled.forEach(function(card){
+    var isAns=tab.probs.some(function(p){ return p.slots.some(function(sl){ return sl.ans===card.v; }); });
+    if(isAns){
+      var need=needed[card.v]||0;
+      var shown=shownCnt[card.v]||0;
+      if(shown<need){
+        pool.appendChild(makeCard(card.v,card.cls));
+        shownCnt[card.v]=(shownCnt[card.v]||0)+1;
+      }
+    } else {
+      if(!shownOff.has(card.v)){
+        pool.appendChild(makeCard(card.v,card.cls));
+        shownOff.add(card.v);
+      }
+    }
+  });
+
+  if(pool.children.length===0)
+    pool.innerHTML='<span style="font-size:12px;color:#2e3350;font-style:italic">모든 카드를 사용했습니다 ✓</span>';
+}
+
+function makeCard(val, cls){
+  var d=document.createElement('div');
+  d.className='dc '+cls;
+  d.textContent=val;
+  d.draggable=true;
+  d.dataset.val=val;
+  d.addEventListener('dragstart',function(e){
+    e.dataTransfer.setData('text/plain', val);
+    setTimeout(function(){ d.classList.add('dragging'); }, 0);
+  });
+  d.addEventListener('dragend',function(){ d.classList.remove('dragging'); });
+  d.addEventListener('touchstart', tsStart, {passive:true});
+  d.addEventListener('touchmove',  tsMove,  {passive:false});
+  d.addEventListener('touchend',   tsEnd);
+  return d;
+}
+
+/* ════ 문제 그리드 ════ */
+function buildGrid(ti){
+  var grid=document.getElementById('probGrid');
+  var tab=TABS[ti];
+  grid.className='prob-grid '+(tab.cols===3?'pg3':'pg2');
+  grid.innerHTML='';
+  tab.probs.forEach(function(prob){
+    grid.appendChild(buildProbCard(ti,prob));
+  });
+}
+
+function buildProbCard(ti,prob){
+  var st=STATE[ti];
+  var card=document.createElement('div');
+  card.className='prob-card'; card.id='pc-'+prob.slots[0].id;
+
+  var numEl=document.createElement('div'); numEl.className='p-num'; numEl.textContent=prob.num; card.appendChild(numEl);
+  var ttl=document.createElement('div'); ttl.className='p-title'; ttl.innerHTML=prob.title; card.appendChild(ttl);
+
+  var cs=document.createElement('div'); cs.className='code-struct';
+  prob.lines.forEach(function(ln){
+    var row=document.createElement('div'); row.className='cl';
+    if(ln.t==='if'){
+      row.appendChild(kw('if ')); row.appendChild(mkSlot(ti,ln.sid,st,prob));
+      row.appendChild(tx(':')); if(ln.cm)row.appendChild(cm(ln.cm));
+    } else if(ln.t==='elif'){
+      row.appendChild(kw('elif ')); row.appendChild(mkSlot(ti,ln.sid,st,prob));
+      row.appendChild(tx(':')); if(ln.cm)row.appendChild(cm(ln.cm));
+    } else if(ln.t==='else'){
+      row.innerHTML='<span class="ck">else</span><span class="ct">:</span>';
+    } else if(ln.t==='in1'){
+      var i=document.createElement('span'); i.className='i1'; row.appendChild(i);
+      var pk=document.createElement('span'); pk.className='ck'; pk.textContent='print'; row.appendChild(pk);
+      var pl=document.createElement('span'); pl.className='ct'; pl.textContent='('; row.appendChild(pl);
+      row.appendChild(mkSlot(ti,ln.sid,st,prob));
+      var pr=document.createElement('span'); pr.className='ct'; pr.textContent=')'; row.appendChild(pr);
+      if(ln.cm)row.appendChild(cm(ln.cm));
+    }
+    cs.appendChild(row);
+  });
+  card.appendChild(cs);
+
+  if(prob.slots.every(function(sl){ return st[sl.id]; })) card.classList.add('done');
+  return card;
+}
+
+function kw(t){ var s=document.createElement('span'); s.className='ck'; s.textContent=t; return s; }
+function tx(t){ var s=document.createElement('span'); s.className='ct'; s.textContent=t; return s; }
+function cm(t){ var s=document.createElement('span'); s.className='cc'; s.textContent=' '+t; return s; }
+
+/* ════ 슬롯 ════ */
+function mkSlot(ti, sid, st, prob){
+  var slot=document.createElement('div');
+  slot.className='slot'; slot.id='slot-'+sid;
+  var slInfo=prob.slots.find(function(s){ return s.id===sid; });
+
+  if(st[sid]){
+    slot.classList.add('ok');
+    slot.textContent='✓ '+slInfo.ans;
+  } else {
+    var hc=slInfo.cls==='dc-cond'?'sh-c':slInfo.cls==='dc-true'?'sh-t':'sh-f';
+    slot.innerHTML='<span class="'+hc+'">'+slInfo.hint+'</span>';
+    attachDrop(slot, ti, sid, prob);
+  }
+  return slot;
+}
+
+function attachDrop(slot, ti, sid, prob){
+  slot.addEventListener('dragover', function(e){
+    e.preventDefault();
+    slot.classList.add('over');
+  });
+  slot.addEventListener('dragleave', function(e){
+    if(!slot.contains(e.relatedTarget)) slot.classList.remove('over');
+  });
+  slot.addEventListener('drop', function(e){
+    e.preventDefault();
+    slot.classList.remove('over');
+    var val=e.dataTransfer.getData('text/plain');
+    if(val) doPlace(ti, sid, val, prob);
+  });
+}
+
+/* ════ 배치 처리 ════ */
+function doPlace(ti, sid, val, prob){
+  var slInfo=prob.slots.find(function(s){ return s.id===sid; });
+  if(!slInfo) return;
+  var slot=document.getElementById('slot-'+sid);
+  if(!slot||slot.classList.contains('ok')) return;
+
+  if(val===slInfo.ans){
+    STATE[ti][sid]=true;
+    slot.className='slot ok';
+    slot.innerHTML='✓ '+val;
+    buildPool(ti);
+    updScore();
+    updDots();
+    // 이 문제 카드 완료 체크
+    if(prob.slots.every(function(s){ return STATE[ti][s.id]; })){
+      var pc=document.getElementById('pc-'+prob.slots[0].id);
+      if(pc) pc.classList.add('done');
+    }
+    // 탭 전체 완료 체크
+    var tabDone=TABS[ti].probs.every(function(p){
+      return p.slots.every(function(s){ return STATE[ti][s.id]; });
+    });
+    if(tabDone) showDone(ti);
+  } else {
+    var hc=slInfo.cls==='dc-cond'?'sh-c':slInfo.cls==='dc-true'?'sh-t':'sh-f';
+    slot.className='slot ng';
+    slot.textContent='✗ '+val;
+    setTimeout(function(){
+      slot.className='slot';
+      slot.innerHTML='<span class="'+hc+'">'+slInfo.hint+'</span>';
+      attachDrop(slot, ti, sid, prob);
+    }, 700);
+  }
+}
+
+/* ════ 완료 ════ */
+function showDone(ti){
+  updDots();
+  var allAll=TABS.every(function(_,i){
+    return TABS[i].probs.every(function(p){ return p.slots.every(function(s){ return STATE[i][s.id]; }); });
+  });
+  var nb=document.getElementById('mNext');
+  var labels=['if 단독','if / else','if / elif / else'];
+  if(allAll){
+    document.getElementById('mEmoji').textContent='🏆';
+    document.getElementById('mTitle').textContent='전체 완료!';
+    document.getElementById('mDesc').textContent='모든 유형의 조건문 구조를 완성했습니다!';
+    nb.style.display='none';
+  } else {
+    document.getElementById('mEmoji').textContent='🎉';
+    document.getElementById('mTitle').textContent=labels[ti]+' 완료!';
+    document.getElementById('mDesc').textContent='다음 유형으로 넘어가 볼까요?';
+    nb.style.display='';
+  }
+  document.getElementById('modalBg').classList.add('show');
+}
+function closeModal(){ document.getElementById('modalBg').classList.remove('show'); }
+function nextTab(){ closeModal(); go((cur+1)%TABS.length); }
+
+function updDots(){
+  TABS.forEach(function(tab,i){
+    var done=tab.probs.every(function(p){ return p.slots.every(function(s){ return STATE[i][s.id]; }); });
+    var btn=document.getElementById('tab'+i);
+    var dot=document.getElementById('td'+i);
+    if(!btn||!dot) return;
+    btn.classList.toggle('done',done);
+    dot.textContent=done?'✓':String(tab.probs.length);
+  });
+}
+
+function showAns(){
+  TABS[cur].probs.forEach(function(p){
+    p.slots.forEach(function(s){ STATE[cur][s.id]=true; });
+  });
+  buildPool(cur); buildGrid(cur); updDots(); updScore();
+}
+function resetCur(){
+  STATE[cur]={};
+  buildPool(cur); buildGrid(cur); updDots(); updScore();
+}
+
+/* ════ 터치 드래그 ════ */
+var tEl=null, tClone=null, tOX=0, tOY=0, tVal='';
+function tsStart(e){
+  var c=e.currentTarget; tEl=c; tVal=c.dataset.val;
+  var r=c.getBoundingClientRect();
+  tOX=e.touches[0].clientX-r.left; tOY=e.touches[0].clientY-r.top;
+  tClone=c.cloneNode(true);
+  tClone.style.cssText='position:fixed;z-index:9999;pointer-events:none;opacity:.85;width:'+r.width+'px;left:'+r.left+'px;top:'+r.top+'px;margin:0';
+  document.body.appendChild(tClone); c.style.opacity='.3';
+}
+function tsMove(e){
+  if(!tClone)return; e.preventDefault();
+  var t=e.touches[0];
+  tClone.style.left=(t.clientX-tOX)+'px'; tClone.style.top=(t.clientY-tOY)+'px';
+}
+function tsEnd(e){
+  if(!tClone||!tEl){tEl=null;return;}
+  tClone.remove(); tClone=null; tEl.style.opacity='';
+  var t=e.changedTouches[0];
+  var el=document.elementFromPoint(t.clientX,t.clientY);
+  var slot=el&&el.closest('.slot');
+  if(slot&&!slot.classList.contains('ok')){
+    var sid=slot.id.replace('slot-','');
+    var found=null;
+    TABS[cur].probs.forEach(function(p){
+      var s=p.slots.find(function(s){ return s.id===sid; });
+      if(s) found=p;
+    });
+    if(found) doPlace(cur,sid,tVal,found);
+  }
+  tEl=null;
+}
+
+/* ════ 초기 실행 ════ */
+document.getElementById('scoreChip').textContent='0/'+totalSlots();
+go(0);
+
+</script>
+</body>
+</html>

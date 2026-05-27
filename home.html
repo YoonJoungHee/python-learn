@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>포켓몬 파이썬 — 실습 홈</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f1117;color:#e8eaf6;font-family:'Nanum Gothic',sans-serif;min-height:100vh}
+
+/* ── 네비 ── */
+.nav{position:sticky;top:0;z-index:100;background:rgba(15,17,23,.96);backdrop-filter:blur(12px);border-bottom:1px solid #2e3350;display:flex;align-items:center;padding:0 1.5rem;height:56px;gap:10px}
+.nav-logo{font-size:17px;font-weight:800;color:#4f8ef7;text-decoration:none;white-space:nowrap}
+.nav-div{width:1px;height:20px;background:#2e3350;margin:0 4px}
+.nav-sub{font-size:12px;color:#4a5272}
+
+/* ── 히어로 ── */
+.hero{text-align:center;padding:4rem 1.5rem 3rem;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(79,142,247,.13),transparent),radial-gradient(ellipse 40% 30% at 85% 60%,rgba(167,139,250,.07),transparent);border-bottom:1px solid #2e3350}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;margin-bottom:1.25rem;background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.25);font-size:11px;font-weight:700;color:#4f8ef7;letter-spacing:.06em}
+.hero h1{font-size:2.4rem;font-weight:800;line-height:1.2;margin-bottom:.75rem}
+.hero h1 .hl{color:#4f8ef7}
+.hero p{font-size:1rem;color:#8892b0;max-width:520px;margin:0 auto 2rem;line-height:1.8}
+.hero-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:2.5rem}
+.pill{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid #2e3350;color:#8892b0;background:#1a1d27}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;padding:13px 32px;border-radius:12px;background:#4f8ef7;color:#fff;font-size:15px;font-weight:800;text-decoration:none;font-family:'Nanum Gothic',sans-serif;transition:background .15s,transform .15s}
+.hero-cta:hover{background:#3a7de8;transform:translateY(-2px)}
+
+/* ── 섹션 ── */
+.section{padding:2.5rem 1.5rem;max-width:1060px;margin:0 auto}
+.sec-eyebrow{font-size:10px;font-weight:700;color:#4a5272;letter-spacing:.1em;margin-bottom:.5rem}
+.sec-title{font-size:1.3rem;font-weight:800;margin-bottom:.35rem}
+.sec-title span{color:#4f8ef7}
+.sec-desc{font-size:13px;color:#8892b0;margin-bottom:1.5rem;line-height:1.7}
+.cat-label{margin-bottom:.6rem;font-size:11px;font-weight:700;color:#4a5272;letter-spacing:.06em}
+
+/* ── 카드 그리드 ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;margin-bottom:1.75rem}
+
+/* ── 도구 카드 ── */
+.tool-card{background:#1a1d27;border:1px solid #2e3350;border-radius:16px;padding:1.5rem;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .15s,box-shadow .2s}
+.tool-card:hover{border-color:var(--hc,#4f8ef7);transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.4)}
+.tc-blue  {--hc:#4f8ef7}.tc-green {--hc:#34d399}.tc-purple{--hc:#a78bfa}
+.tc-orange{--hc:#fb923c}.tc-yellow{--hc:#fbbf24}.tc-teal  {--hc:#2dd4bf}
+.tc-pink  {--hc:#f472b6}.tc-red   {--hc:#f87171}.tc-indigo{--hc:#818cf8}
+
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.card-icon{font-size:2rem;line-height:1}
+.card-new{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.3);white-space:nowrap}
+.card-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-bottom:4px}
+.cb-blue  {background:rgba(79,142,247,.15); color:#60a5fa}
+.cb-green {background:rgba(52,211,153,.15); color:#34d399}
+.cb-purple{background:rgba(167,139,250,.15);color:#a78bfa}
+.cb-orange{background:rgba(251,146,60,.15); color:#fb923c}
+.cb-yellow{background:rgba(251,191,36,.12); color:#fbbf24}
+.cb-teal  {background:rgba(45,212,191,.12); color:#2dd4bf}
+.cb-pink  {background:rgba(244,114,182,.12);color:#f472b6}
+.cb-indigo{background:rgba(129,140,248,.15);color:#818cf8}
+
+.card-title{font-size:1rem;font-weight:800;color:#e8eaf6;line-height:1.3}
+.card-desc {font-size:12.5px;color:#8892b0;line-height:1.65;flex:1}
+.card-tags {display:flex;flex-wrap:wrap;gap:6px;margin-top:.25rem}
+.tag{font-size:11px;color:#4a5272;background:#22263a;border-radius:6px;padding:2px 8px}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:.5rem;padding-top:.875rem;border-top:1px solid #22263a}
+.card-link{font-size:12px;color:#4a5272;font-weight:700}
+.card-arr{font-size:16px;color:#4a5272;transition:transform .15s,color .15s}
+.tool-card:hover .card-arr{transform:translateX(4px);color:var(--hc,#4f8ef7)}
+
+/* ── 구분선 ── */
+.divider{border:none;border-top:1px solid #2e3350;margin:0 1.5rem}
+
+/* ── 학습 흐름 ── */
+.flow-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px}
+.flow-card{background:#1a1d27;border:1px solid #2e3350;border-radius:12px;padding:1.1rem}
+.flow-num{width:28px;height:28px;border-radius:50%;background:rgba(79,142,247,.15);border:1px solid rgba(79,142,247,.3);color:#4f8ef7;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:.7rem}
+.flow-icon{font-size:1.3rem;margin-bottom:.4rem}
+.flow-title{font-size:13px;font-weight:800;margin-bottom:.35rem}
+.flow-desc{font-size:11.5px;color:#8892b0;line-height:1.6}
+.flow-link{display:inline-block;margin-top:.6rem;font-size:12px;font-weight:700;color:#4f8ef7;text-decoration:none}
+.flow-link:hover{text-decoration:underline}
+
+/* ── 푸터 ── */
+.footer{border-top:1px solid #2e3350;padding:2rem 1.5rem;text-align:center;font-size:12px;color:#4a5272;line-height:2}
+.footer a{color:#4f8ef7;text-decoration:none}
+.footer a:hover{text-decoration:underline}
+
+@media(max-width:600px){.hero h1{font-size:1.8rem}.section{padding:2rem 1rem}}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#2e3350;border-radius:3px}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-logo" href="home.html">⚡ 포켓몬 파이썬</a>
+  <div class="nav-div"></div>
+  <span class="nav-sub">Python 기초 학습 플랫폼</span>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">🎮 인터랙티브 파이썬 학습</div>
+  <h1>포켓몬 트레이너처럼<br><span class="hl">파이썬</span>을 마스터하자!</h1>
+  <p>강의 · 순서도 시뮬레이터 · 드래그 학습지 · 퀴즈까지<br>보고 만지고 풀어보면서 파이썬 기초를 완성하세요.</p>
+  <div class="hero-pills">
+    <span class="pill">📗 강의 6챕터</span>
+    <span class="pill">🎬 시뮬레이터 4종</span>
+    <span class="pill">🧩 드래그 학습지 3종</span>
+    <span class="pill">📝 퀴즈 2종</span>
+  </div>
+  <a class="hero-cta" href="#tools">실습 시작하기 →</a>
+</div>
+
+<!-- ══ 실습 도구 ══ -->
+<div class="section" id="tools">
+  <div class="sec-eyebrow">LEARNING TOOLS</div>
+  <div class="sec-title">🛠 실습 <span>도구</span></div>
+  <div class="sec-desc">클릭하면 바로 시작됩니다. 모든 도구는 크롬 브라우저에서 최적으로 동작합니다.</div>
+
+  <!-- 강의 -->
+  <div class="cat-label">📗 강의</div>
+  <div class="card-grid">
+    <a class="tool-card tc-blue" href="index.html">
+      <div class="card-top"><div class="card-icon">📗</div></div>
+      <span class="card-badge cb-blue">강의 + 실습 + 저지</span>
+      <div class="card-title">파이썬 강의 사이트</div>
+      <div class="card-desc">6개 챕터 강의, 브라우저 파이썬 실행, 온라인 저지 자동 채점까지 한 곳에서 학습하는 메인 사이트입니다.</div>
+      <div class="card-tags">
+        <span class="tag">📖 6챕터</span><span class="tag">💻 코드 실행</span>
+        <span class="tag">⚡ 자동 채점</span><span class="tag">🏆 포켓몬 저지</span>
+      </div>
+      <div class="card-footer"><span class="card-link">강의 시작하기</span><span class="card-arr">→</span></div>
+    </a>
+  </div>
+
+  <!-- 시뮬레이터 -->
+  <div class="cat-label">🎬 시뮬레이터</div>
+  <div class="card-grid">
+
+    <a class="tool-card tc-green" href="simulator/simulator.html">
+      <div class="card-top"><div class="card-icon">🔀</div></div>
+      <span class="card-badge cb-green">조건문 · 순서도 애니메이션</span>
+      <div class="card-title">조건문 순서도 시뮬레이터</div>
+      <div class="card-desc">점수를 선택하면 파란 공이 순서도 경로를 따라 움직입니다. if / if-else / if-elif-else 세 유형을 단계별로 확인하세요.</div>
+      <div class="card-tags">
+        <span class="tag">if 단독</span><span class="tag">if / else</span>
+        <span class="tag">if / elif / else</span><span class="tag">자동 재생</span>
+      </div>
+      <div class="card-footer"><span class="card-link">시뮬레이터 열기</span><span class="card-arr">→</span></div>
+    </a>
+
+    <a class="tool-card tc-yellow" href="simulator/input-int-sim.html">
+      <div class="card-top"><div class="card-icon">⌨️</div></div>
+      <span class="card-badge cb-yellow">입력 · 변환 · 저장</span>
+      <div class="card-title">a = int(input()) 시뮬레이터</div>
+      <div class="card-desc">input() → str → int() 변환 → 변수 저장까지 4단계를 하나씩 눈으로 확인합니다. 숫자가 아닌 값으로 오류도 체험할 수 있습니다.</div>
+      <div class="card-tags">
+        <span class="tag">4단계 파이프라인</span><span class="tag">메모리 시각화</span>
+        <span class="tag">오류 체험</span><span class="tag">자동 재생</span>
+      </div>
+      <div class="card-footer"><span class="card-link">시뮬레이터 열기</span><span class="card-arr">→</span></div>
+    </a>
+
+    <a class="tool-card tc-teal" href="simulator/map-input-sim.html">
+      <div class="card-top"><div class="card-icon">🔢</div></div>
+      <span class="card-badge cb-teal">입력 · split · map</span>
+      <div class="card-title">map(int, input().split()) 시뮬레이터</div>
+      <div class="card-desc">공백으로 구분된 숫자 3개 입력 → split()으로 자르기 → map(int)로 각각 변환 → a, b, c 저장까지 6단계를 시각화합니다.</div>
+      <div class="card-tags">
+        <span class="tag">6단계 파이프라인</span><span class="tag">split 시각화</span>
+        <span class="tag">map 변환</span><span class="tag">오류 체험</span>
+      </div>
+      <div class="card-footer"><span class="card-link">시뮬레이터 열기</span><span class="card-arr">→</span></div>
+    </a>
+
+    <a class="tool-card tc-indigo" href="simulator/range_simulator.html">
+      <div class="card-top">
+        <div class="card-icon">🔁</div>
+        <span class="card-new">NEW</span>
+      </div>
+      <span class="card-badge cb-indigo">반복문 · range() 시각화</span>
+      <div class="card-title">range() 함수 시뮬레이터</div>
+      <div class="card-desc">range(시작, 끝, 간격) 세 가지 형태를 슬라이더와 직접 입력으로 조작하면 생성되는 숫자 목록을 실시간으로 시각화합니다.</div>
+      <div class="card-tags">
+        <span class="tag">range(n)</span><span class="tag">range(a,b)</span>
+        <span class="tag">range(a,b,c)</span><span class="tag">실시간 시각화</span>
+      </div>
+      <div class="card-footer"><span class="card-link">시뮬레이터 열기</span><span class="card-arr">→</span></div>
+    </a>
+
+  </div>
+
+  <!-- 드래그 학습지 -->
+  <div class="cat-label">🧩 드래그 학습지</div>
+  <div class="card-grid">
+
+    <a class="tool-card tc-purple" href="simulator/datatype-sort.html">
+      <div class="card-top"><div class="card-icon">🧩</div></div>
+      <span class="card-badge cb-purple">자료형 · 드래그 분류</span>
+      <div class="card-title">자료형 분류 학습지</div>
+      <div class="card-desc">int / float / str / bool 카드를 드래그해서 알맞은 자료형 칸에 분류하세요. 맞으면 고정, 틀리면 카드 풀로 자동 복귀합니다.</div>
+      <div class="card-tags">
+        <span class="tag">카드 20장</span><span class="tag">4가지 자료형</span>
+        <span class="tag">터치 지원</span><span class="tag">진행 현황</span>
+      </div>
+      <div class="card-footer"><span class="card-link">학습지 열기</span><span class="card-arr">→</span></div>
+    </a>
+
+    <a class="tool-card tc-orange" href="simulator/conditional-fill.html">
+      <div class="card-top"><div class="card-icon">🎯</div></div>
+      <span class="card-badge cb-orange">조건문 · 빈칸 완성</span>
+      <div class="card-title">조건문 구조 완성하기</div>
+      <div class="card-desc">조건 · 참일 때 · 거짓일 때 카드를 드래그해서 조건문 코드의 빈칸을 채우세요. 총 8문제, 정답 해설 포함.</div>
+      <div class="card-tags">
+        <span class="tag">8문제</span><span class="tag">3가지 유형</span>
+        <span class="tag">카드 셔플</span><span class="tag">터치 지원</span>
+      </div>
+      <div class="card-footer"><span class="card-link">문제 풀기</span><span class="card-arr">→</span></div>
+    </a>
+
+    <a class="tool-card tc-teal" href="simulator/leap-year-sim.html">
+      <div class="card-top"><div class="card-icon">🗓</div></div>
+      <span class="card-badge cb-teal">조건문 · 윤년 판별</span>
+      <div class="card-title">윤년 판별 코드 완성하기</div>
+      <div class="card-desc">400→100→4 순, 중첩 if, 100→400→4 순, 논리 연산자 총 4가지 방법으로 윤년 판별 코드의 조건식과 print문을 드래그로 완성합니다.</div>
+      <div class="card-tags">
+        <span class="tag">4가지 방법</span><span class="tag">조건식 완성</span>
+        <span class="tag">print문 완성</span><span class="tag">개요 포함</span>
+      </div>
+      <div class="card-footer"><span class="card-link">실습 시작하기</span><span class="card-arr">→</span></div>
+    </a>
+
+  </div>
+
+  <!-- 퀴즈 -->
+  <div class="cat-label">📝 퀴즈</div>
+  <div class="card-grid">
+
+    <a class="tool-card tc-pink" href="simulator/varname-quiz.html">
+      <div class="card-top"><div class="card-icon">📝</div></div>
+      <span class="card-badge cb-pink">변수명 규칙 · OX + 선다형</span>
+      <div class="card-title">변수 이름 규칙 퀴즈</div>
+      <div class="card-desc">변수명이 올바른지 OX로 판단하고, 마지막 5지 선다형에서 선택하면 모든 항목의 이유가 해설과 함께 표시됩니다. 총 5문제.</div>
+      <div class="card-tags">
+        <span class="tag">OX 4문제</span><span class="tag">5지 선다 1문제</span>
+        <span class="tag">개별 해설</span><span class="tag">규칙 정리</span>
+      </div>
+      <div class="card-footer"><span class="card-link">퀴즈 시작하기</span><span class="card-arr">→</span></div>
+    </a>
+
+    <a class="tool-card tc-orange" href="simulator/quiz_conditional.html">
+      <div class="card-top">
+        <div class="card-icon">🔀</div>
+      </div>
+      <span class="card-badge cb-orange">조건문 구조 · 드래그 완성</span>
+      <div class="card-title">조건문 구조 완성하기 (심화)</div>
+      <div class="card-desc">if / if-else / if-elif-else 조건문의 빈칸을 드래그로 채우는 퀴즈입니다. 조건식과 실행 구문을 직접 배치해 보세요.</div>
+      <div class="card-tags">
+        <span class="tag">if 단독</span><span class="tag">if / else</span>
+        <span class="tag">if / elif / else</span><span class="tag">드래그 완성</span>
+      </div>
+      <div class="card-footer"><span class="card-link">퀴즈 시작하기</span><span class="card-arr">→</span></div>
+    </a>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ══ 학습 흐름 ══ -->
+<div class="section">
+  <div class="sec-eyebrow">LEARNING PATH</div>
+  <div class="sec-title">📋 권장 <span>학습 순서</span></div>
+  <div class="sec-desc">이 순서대로 학습하면 개념 → 시각화 → 실습 → 확인의 흐름으로 가장 효과적입니다.</div>
+  <div class="flow-grid">
+    <div class="flow-card">
+      <div class="flow-num">1</div>
+      <div class="flow-icon">📗</div>
+      <div class="flow-title">강의로 개념 학습</div>
+      <div class="flow-desc">강의 사이트에서 자료형, 변수, 조건문, 반복문 개념을 읽고 코드를 직접 실행해 보세요.</div>
+      <a class="flow-link" href="index.html">강의 사이트 →</a>
+    </div>
+    <div class="flow-card">
+      <div class="flow-num">2</div>
+      <div class="flow-icon">📝</div>
+      <div class="flow-title">변수 규칙 확인</div>
+      <div class="flow-desc">변수 이름 규칙 퀴즈로 올바른 변수명을 판단하는 연습을 합니다.</div>
+      <a class="flow-link" href="simulator/varname-quiz.html">퀴즈 →</a>
+    </div>
+    <div class="flow-card">
+      <div class="flow-num">3</div>
+      <div class="flow-icon">⌨️</div>
+      <div class="flow-title">입력 함수 이해</div>
+      <div class="flow-desc">int(input())와 map(int, input().split()) 시뮬레이터로 입력 → 변환 → 저장 과정을 확인하세요.</div>
+      <a class="flow-link" href="simulator/input-int-sim.html">시뮬레이터 →</a>
+    </div>
+    <div class="flow-card">
+      <div class="flow-num">4</div>
+      <div class="flow-icon">🧩</div>
+      <div class="flow-title">자료형 분류 실습</div>
+      <div class="flow-desc">드래그 학습지로 int / float / str / bool을 직접 분류하며 자료형 개념을 완성합니다.</div>
+      <a class="flow-link" href="simulator/datatype-sort.html">학습지 →</a>
+    </div>
+    <div class="flow-card">
+      <div class="flow-num">5</div>
+      <div class="flow-icon">🔀</div>
+      <div class="flow-title">조건문 순서도</div>
+      <div class="flow-desc">순서도 시뮬레이터에서 점수를 바꿔가며 공이 어느 경로로 이동하는지 눈으로 확인합니다.</div>
+      <a class="flow-link" href="simulator/simulator.html">시뮬레이터 →</a>
+    </div>
+    <div class="flow-card">
+      <div class="flow-num">6</div>
+      <div class="flow-icon">🎯</div>
+      <div class="flow-title">조건문 빈칸 완성</div>
+      <div class="flow-desc">조건문 구조 완성하기로 조건 / 참 / 거짓 카드를 직접 배치하며 코드 구조를 익힙니다.</div>
+      <a class="flow-link" href="simulator/conditional-fill.html">학습지 →</a>
+    </div>
+    <div class="flow-card">
+      <div class="flow-num">7</div>
+      <div class="flow-icon">🗓</div>
+      <div class="flow-title">윤년 판별 완성</div>
+      <div class="flow-desc">조건문 4가지 방법으로 윤년 판별 코드를 드래그로 완성합니다. 조건 순서의 차이를 체험하세요.</div>
+      <a class="flow-link" href="simulator/leap-year-sim.html">학습지 →</a>
+    </div>
+    <div class="flow-card">
+      <div class="flow-num">8</div>
+      <div class="flow-icon">🔁</div>
+      <div class="flow-title">range() 시각화</div>
+      <div class="flow-desc">range() 시뮬레이터로 시작, 끝, 간격을 조절하며 생성되는 숫자를 실시간으로 확인합니다.</div>
+      <a class="flow-link" href="simulator/range_simulator.html">시뮬레이터 →</a>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  ⚡ 포켓몬 파이썬 &nbsp;·&nbsp; 일반고 정보 수업용 인터랙티브 학습 플랫폼<br>
+  Python 실행 엔진: <a href="https://pyodide.org" target="_blank">Pyodide</a>
+  &nbsp;|&nbsp; GitHub Pages로 배포
+</div>
+
+</body>
+</html>

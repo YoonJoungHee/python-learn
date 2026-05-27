@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>포켓몬으로 배우는 파이썬</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=JetBrains+Mono:wght@400;600&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+<style>
+:root{
+  --bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3350;
+  --accent:#4f8ef7;--accent2:#a78bfa;--green:#34d399;--red:#f87171;--yellow:#fbbf24;
+  --text:#e8eaf6;--text2:#8892b0;--text3:#4a5272;
+  --mono:'JetBrains Mono',monospace;--sans:'Nanum Gothic',sans-serif;--body:'Gowun Dodum',sans-serif;
+  --radius:10px;--topbar-h:52px;--tabbar-h:44px;--sub-w:200px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body);display:flex;flex-direction:column}
+
+/* ══ 최상단 로고바 ══ */
+.topbar{
+  height:var(--topbar-h);min-height:var(--topbar-h);
+  background:rgba(15,17,23,.98);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 1.5rem;gap:12px;z-index:300;flex-shrink:0;
+}
+.logo{font-family:var(--sans);font-weight:800;font-size:17px;color:var(--accent);white-space:nowrap}
+.logo-sub{font-size:12px;color:var(--text3);font-family:var(--sans);margin-left:4px}
+.py-badge{
+  margin-left:auto;padding:3px 10px;border-radius:20px;
+  background:var(--surface2);border:1px solid var(--border);
+  font-size:11px;font-family:var(--mono);color:var(--text3);white-space:nowrap;
+  transition:color .3s,border-color .3s;
+}
+.py-badge.ready{color:var(--green);border-color:rgba(52,211,153,.4)}
+
+/* ══ 메인 탭바 (상단 메뉴) ══ */
+.tabbar{
+  height:var(--tabbar-h);min-height:var(--tabbar-h);
+  background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:stretch;padding:0 1rem;gap:2px;z-index:200;flex-shrink:0;
+}
+.tab{
+  display:flex;align-items:center;gap:7px;
+  padding:0 18px;font-family:var(--sans);font-weight:700;font-size:13px;
+  color:var(--text2);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;white-space:nowrap;
+  transition:color .15s,border-color .15s;
+}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab .t-icon{font-size:14px}
+
+/* ══ 바디 (서브메뉴 + 콘텐츠) ══ */
+.body-wrap{display:flex;flex:1;overflow:hidden}
+
+/* ══ 왼쪽 서브메뉴 패널 ══ */
+.submenu{
+  width:0;min-width:0;overflow:hidden;flex-shrink:0;
+  background:#13161f;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  transition:width .22s cubic-bezier(.4,0,.2,1);
+}
+.submenu.open{width:var(--sub-w)}
+.sm-hd{
+  padding:14px 16px 10px;font-family:var(--sans);font-weight:800;font-size:11px;
+  color:var(--accent);letter-spacing:.05em;border-bottom:1px solid var(--border);
+  white-space:nowrap;flex-shrink:0;
+}
+.sm-list{overflow-y:auto;flex:1;padding:6px 0}
+.sm-item{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 16px;width:100%;border:none;background:none;text-align:left;
+  font-family:var(--sans);font-weight:700;font-size:12px;color:var(--text2);
+  cursor:pointer;border-left:2px solid transparent;white-space:nowrap;
+  transition:background .12s,color .12s,border-color .12s;
+}
+.sm-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.sm-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(79,142,247,.07)}
+.sm-item .sm-icon{font-size:13px;min-width:18px;text-align:center}
+.sm-item .sm-label{flex:1;overflow:hidden;text-overflow:ellipsis}
+.sm-badge{
+  flex-shrink:0;font-size:10px;padding:1px 5px;border-radius:8px;
+  background:var(--surface2);color:var(--text3);font-family:var(--mono);
+}
+.sm-badge.easy{background:rgba(52,211,153,.12);color:var(--green)}
+.sm-badge.mid{background:rgba(251,191,36,.1);color:var(--yellow)}
+.sm-badge.solved{background:rgba(52,211,153,.12);color:var(--green)}
+.sm-section{
+  padding:10px 16px 4px;font-size:10px;font-family:var(--sans);
+  font-weight:700;color:var(--text3);letter-spacing:.06em;
+}
+
+/* ══ 메인 콘텐츠 ══ */
+.main{flex:1;overflow-y:auto;padding:2rem 2.5rem;min-width:0}
+
+/* ══ 페이지 ══ */
+.page{display:none}.page.active{display:block}
+
+/* ══ 홈 ══ */
+.hero{
+  text-align:center;padding:2.5rem 1rem 2rem;border-radius:16px;margin-bottom:1.5rem;
+  background:radial-gradient(ellipse 60% 45% at 50% 0%,rgba(79,142,247,.11),transparent);
+}
+.hero h1{font-family:var(--sans);font-size:2.2rem;font-weight:800;line-height:1.2;margin-bottom:.65rem}
+.hero h1 span{color:var(--accent)}
+.hero p{color:var(--text2);font-size:.95rem;max-width:480px;margin:0 auto 1.25rem;line-height:1.7}
+.pill-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:1.5rem}
+.pill{padding:4px 12px;border-radius:20px;font-size:11px;font-family:var(--sans);font-weight:700;border:1px solid var(--border);color:var(--text2);background:var(--surface)}
+.sec-label{font-size:10px;font-family:var(--sans);font-weight:700;color:var(--text3);letter-spacing:.06em;margin-bottom:.75rem}
+.ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:10px}
+.ch-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1.1rem;cursor:pointer;transition:border-color .2s,transform .15s}
+.ch-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.ch-card .cn{font-family:var(--mono);font-size:10px;color:var(--accent);margin-bottom:4px}
+.ch-card .ct{font-family:var(--sans);font-weight:700;font-size:13px;margin-bottom:3px}
+.ch-card .cd{font-size:11px;color:var(--text2);line-height:1.5}
+
+/* ══ 강의 ══ */
+.ls-title{font-family:var(--sans);font-weight:800;font-size:1.3rem;margin-bottom:.875rem}
+.prog-bar{height:3px;background:var(--border);border-radius:2px;margin-bottom:1.5rem;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s}
+.ls-body{line-height:1.85;font-size:14px}
+.ls-body h3{font-family:var(--sans);font-weight:800;font-size:.95rem;margin:1.5rem 0 .5rem;color:var(--accent2)}
+.ls-body p{color:var(--text2);margin-bottom:.65rem}
+.ls-body ul{color:var(--text2);padding-left:1.2rem;margin-bottom:.65rem}
+.ls-body li{margin-bottom:.25rem}
+.ls-body strong{color:var(--text);font-weight:700}
+.tip-box{background:rgba(79,142,247,.07);border-left:3px solid var(--accent);border-radius:0 var(--radius) var(--radius) 0;padding:.75rem 1rem;margin:.875rem 0;font-size:13px;color:var(--text2)}
+.tip-box strong{color:var(--accent);display:block;margin-bottom:3px;font-family:var(--sans)}
+.warn-box{background:rgba(251,191,36,.05);border-left:3px solid var(--yellow);border-radius:0 var(--radius) var(--radius) 0;padding:.75rem 1rem;margin:.875rem 0;font-size:13px;color:var(--text2)}
+.warn-box strong{color:var(--yellow);display:block;margin-bottom:3px;font-family:var(--sans)}
+.ls-nav{display:flex;gap:10px;margin-top:2rem;justify-content:flex-end;padding-top:1rem;border-top:1px solid var(--border)}
+.ls-nav button{padding:7px 18px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-family:var(--sans);font-weight:700;cursor:pointer;transition:all .15s}
+.ls-nav button:hover{border-color:var(--accent);color:var(--accent)}
+.ls-nav button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.ls-nav button.primary:hover{background:#3a7de8}
+
+/* ══ 코드블록 ══ */
+.code-block{background:#0d1117;border:1px solid var(--border);border-radius:var(--radius);margin:.875rem 0;overflow:hidden}
+.code-hd{padding:6px 14px;background:var(--surface);border-bottom:1px solid var(--border)}
+.code-lang{font-family:var(--mono);font-size:10px;color:var(--text3)}
+pre{padding:.875rem 1.25rem;overflow-x:auto;font-family:var(--mono);font-size:12px;line-height:1.7;color:#cdd6f4}
+.kw{color:#cba6f7}.st{color:#a6e3a1}.cm{color:#6a7090}.fn{color:#89dceb}
+
+/* ══ 에디터 ══ */
+.ed-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin:.875rem 0;overflow:hidden}
+.ed-hd{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.ed-title{font-family:var(--sans);font-weight:700;font-size:12px;color:var(--text2);flex:1}
+.run-btn{padding:5px 15px;border-radius:7px;background:var(--accent);border:none;color:#fff;font-size:12px;font-family:var(--sans);font-weight:700;cursor:pointer;transition:background .15s}
+.run-btn:hover{background:#3a7de8}
+.run-btn:disabled{background:var(--surface2);cursor:not-allowed;color:var(--text3)}
+.ed-ta{width:100%;padding:.875rem 1.25rem;background:#0d1117;border:none;resize:vertical;min-height:120px;font-family:var(--mono);font-size:12px;line-height:1.7;color:#cdd6f4;outline:none;tab-size:4}
+.out-area{padding:.875rem 1.25rem;background:#070a0f;border-top:1px solid var(--border);font-family:var(--mono);font-size:12px;line-height:1.7;min-height:48px;color:var(--green);white-space:pre-wrap}
+.out-area.error{color:var(--red)}.out-area.idle{color:var(--text3)}
+
+/* ══ 실습 ══ */
+.pg-title{font-family:var(--sans);font-weight:800;font-size:1.2rem;margin-bottom:.4rem}
+.pg-desc{font-size:13px;color:var(--text2);margin-bottom:1.1rem}
+.snip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:8px;margin-top:.75rem}
+.snip-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem 1rem;cursor:pointer;transition:border-color .2s}
+.snip-card:hover{border-color:var(--accent)}
+.snip-card .sl{font-family:var(--sans);font-weight:700;font-size:12px;margin-bottom:4px}
+.snip-card .sp{font-size:10px;color:var(--text3);font-family:var(--mono)}
+
+/* ══ 저지 ══ */
+.jg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-bottom:1.25rem}
+.jg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;cursor:pointer;transition:border-color .2s,transform .15s}
+.jg-card:hover{border-color:var(--accent2);transform:translateY(-2px)}
+.badge{display:inline-block;font-size:10px;font-family:var(--sans);font-weight:700;padding:2px 7px;border-radius:20px;margin-bottom:5px}
+.badge.easy{background:rgba(52,211,153,.15);color:var(--green)}
+.badge.mid{background:rgba(251,191,36,.12);color:var(--yellow)}
+.badge.hard{background:rgba(248,113,113,.12);color:var(--red)}
+.jg-card .jt{font-family:var(--sans);font-weight:700;font-size:13px;margin-bottom:3px}
+.jg-card .jd{font-size:11px;color:var(--text2);line-height:1.5}
+.jstat{float:right;width:17px;height:17px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px}
+.jstat.solved{background:rgba(52,211,153,.15);border-color:var(--green);color:var(--green)}
+.prob-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:.875rem}
+.prob-box h3{font-family:var(--sans);font-weight:800;font-size:.875rem;margin-bottom:.5rem}
+.prob-box p,.prob-box li{font-size:12.5px;color:var(--text2);line-height:1.7;margin-bottom:.25rem}
+.io-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:.5rem 0}
+.io-box{background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem}
+.io-label{font-size:10px;font-family:var(--sans);font-weight:700;color:var(--text3);margin-bottom:4px}
+.io-val{font-family:var(--mono);font-size:12px;color:var(--text2)}
+.submit-row{display:flex;gap:10px;margin-top:.875rem;align-items:center;flex-wrap:wrap}
+.submit-btn{padding:7px 20px;border-radius:var(--radius);background:var(--accent2);border:none;color:#fff;font-size:13px;font-family:var(--sans);font-weight:700;cursor:pointer;transition:background .15s}
+.submit-btn:hover{background:#9061f9}
+.submit-btn:disabled{background:var(--border);cursor:not-allowed;color:var(--text3)}
+.verdict{padding:6px 14px;border-radius:var(--radius);font-family:var(--sans);font-weight:700;font-size:12px;display:none}
+.verdict.ac{background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3)}
+.verdict.wa{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.3)}
+.verdict.show{display:inline-flex;align-items:center;gap:5px}
+
+/* 스크롤바 */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- ① 로고바 -->
+<div class="topbar">
+  <div class="logo">⚡ 포켓몬 파이썬</div>
+  <span class="logo-sub">· 포켓몬과 함께 배우는 Python</span>
+  <div class="py-badge" id="pyBadge">Python 로딩 중...</div>
+</div>
+
+<!-- ② 상단 탭 메뉴 -->
+<div class="tabbar">
+  <button class="tab active" id="tab-home" onclick="selectTab('home')">
+    <span class="t-icon">🏠</span> 홈
+  </button>
+  <button class="tab" id="tab-lecture" onclick="selectTab('lecture')">
+    <span class="t-icon">📗</span> 강의
+  </button>
+  <button class="tab" id="tab-practice" onclick="selectTab('practice')">
+    <span class="t-icon">💻</span> 실습
+  </button>
+  <button class="tab" id="tab-judge" onclick="selectTab('judge')">
+    <span class="t-icon">🏆</span> 포켓몬 배틀
+  </button>
+</div>
+
+<!-- ③ 서브메뉴(좌) + 콘텐츠(우) -->
+<div class="body-wrap">
+
+  <!-- 왼쪽 서브메뉴 -->
+  <div class="submenu" id="submenu">
+    <div class="sm-hd" id="smHd"></div>
+    <div class="sm-list" id="smList"></div>
+  </div>
+
+  <!-- 오른쪽 콘텐츠 -->
+  <div class="main">
+
+    <!-- 홈 -->
+    <div class="page active" id="page-home">
+      <div class="hero">
+        <h1>포켓몬 트레이너가<br><span>파이썬</span>을 배우다!</h1>
+        <p>포켓몬 세계를 탐험하며 파이썬 코딩을 배워보세요.<br>지식을 습득할수록 더 강한 트레이너가 됩니다!</p>
+        <div class="pill-row">
+          <span class="pill">⚡ 6개 챕터</span>
+          <span class="pill">🔥 브라우저 실행</span>
+          <span class="pill">🏆 포켓몬 배틀</span>
+          <span class="pill">🎮 즐겁게 코딩</span>
+        </div>
+      </div>
+      <div class="sec-label">⚡ 학습 챕터 — 클릭하면 강의로 이동합니다</div>
+      <div class="ch-grid" id="chGrid"></div>
+    </div>
+
+    <!-- 강의 -->
+    <div class="page" id="page-lecture">
+      <div class="ls-title" id="lsTitle">왼쪽에서 강의를 선택하세요</div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <div id="lsBody" class="ls-body">
+        <p style="color:var(--text2)">왼쪽 메뉴에서 챕터를 선택하면 강의가 시작됩니다.</p>
+      </div>
+      <div class="ls-nav" id="lsNav"></div>
+    </div>
+
+    <!-- 실습 -->
+    <div class="page" id="page-practice">
+      <div class="pg-title" id="practiceTitle">🔥 자유 실습</div>
+      <div class="pg-desc" id="practiceDesc">파이썬 코드를 직접 작성하고 실행해 보세요. 트레이너처럼 자유롭게!</div>
+      <div id="practiceBody">
+        <div class="ed-wrap">
+          <div class="ed-hd">
+            <span class="ed-title">main.py</span>
+            <button class="run-btn" id="freeRunBtn" onclick="runFree()" disabled>▶ 실행</button>
+          </div>
+          <textarea class="ed-ta" id="freeCode" spellcheck="false"># 나만의 포켓몬 코드를 작성해 보세요!
+pokemon = "피카츄"
+print("내 포켓몬:", pokemon)
+print("Go!", pokemon + "!")
+print("레벨:", 25)
+</textarea>
+          <div class="out-area idle" id="freeOut">▶ 실행 버튼을 누르면 결과가 여기에 표시됩니다.</div>
+        </div>
+      </div>
+      <div id="snipArea" style="display:none;margin-top:.5rem">
+        <div class="sec-label">예제 코드 — 클릭하면 에디터에 불러옵니다</div>
+        <div class="snip-grid" id="snipGrid"></div>
+      </div>
+    </div>
+
+    <!-- 저지 -->
+    <div class="page" id="page-judge">
+      <div id="jgListArea">
+        <div class="pg-title">🏆 포켓몬 배틀</div>
+        <div class="pg-desc">문제를 풀고 제출하면 자동으로 채점합니다. 모두 맞히면 챔피언!</div>
+        <div class="jg-grid" id="jgGrid"></div>
+      </div>
+      <div id="jgDetailArea" style="display:none">
+        <div id="jgDetail"></div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /body-wrap -->
+
+<script>
+/* ─── 데이터 ─── */
+const CHAPTERS = [
+  {id:0,icon:'⚡',title:'파이썬 소개',desc:'파이썬이란? 포켓몬으로 시작하기',content:`
+<h3>파이썬(Python)이란?</h3>
+<p>파이썬은 1991년에 만들어진 프로그래밍 언어입니다. 포켓몬 게임도 프로그래밍으로 만들어졌어요! <strong>읽기 쉽고, 배우기 쉬운</strong> 것이 가장 큰 특징입니다.</p>
+<p>파이썬으로 포켓몬 도감을 만들거나, 포켓몬 배틀 시뮬레이터도 만들 수 있습니다. 자, 이제 첫 번째 기술을 배워봅시다!</p>
+
+<div class="tip-box"><strong>💡 파이썬의 특징</strong>문법이 영어 문장처럼 읽혀서 처음 배우는 사람도 쉽게 이해할 수 있습니다. 전 세계에서 가장 인기 있는 언어 중 하나입니다.</div>
+
+<h3>첫 번째 기술 — print() 로 외치기!</h3>
+<p>포켓몬이 배틀에서 기술 이름을 외치듯, 파이썬은 <strong>print()</strong> 로 화면에 내용을 출력합니다.</p>
+${cb(`# 피카츄가 기술을 외칩니다!
+print("피카츄!")
+print("백만볼트!")
+print("Go! 피카츄!")`)}
+
+<div class="tip-box"><strong>💡 print() 규칙</strong>괄호 안의 내용을 화면에 출력합니다. 글자(문자)는 반드시 따옴표(" 또는 ')로 감싸야 합니다!</div>
+
+<h3>포켓몬 도감 출력하기</h3>
+<p>print()로 여러 줄을 출력하면 간단한 포켓몬 도감을 만들 수 있습니다.</p>
+${cb(`print("==== 포켓몬 도감 ====")
+print("번호: 025")
+print("이름: 피카츄")
+print("타입: 전기")
+print("특기: 백만볼트")
+print("===================")`)}
+
+<h3>숫자도 출력할 수 있어요!</h3>
+<p>숫자는 따옴표 없이 바로 씁니다. 계산 결과도 출력할 수 있습니다.</p>
+${cb(`print(025)          # 포켓몬 번호
+print(100)          # HP
+print(55 + 45)      # 공격력 + 특수공격력
+print(10 * 3)       # 기술 데미지 계산`)}
+
+<div class="warn-box"><strong>⚠️ 트레이너 주의!</strong>따옴표를 빠뜨리거나 괄호를 닫지 않으면 오류가 발생합니다. 포켓몬 배틀에서 기술 이름을 틀리게 외치면 실패하는 것처럼요!</div>
+
+<h3>직접 실행해 보세요 — 나만의 포켓몬 소개하기</h3>
+${eb(0,`# 내가 좋아하는 포켓몬을 소개해 보세요!
+print("==== 내 포켓몬 ====")
+print("이름: 이상해씨")
+print("타입: 풀 / 독")
+print("레벨: 5")
+print("기술: 몸통박치기, 덩굴채찍")
+print("HP:", 45)
+print("좋아하는 이유: 귀엽기 때문!")`)}
+`},
+  {id:1,icon:'📦',title:'변수와 자료형',desc:'변수 선언, int·str·float·bool',content:`
+<h3>변수란?</h3>
+<p>변수는 데이터를 저장하는 <strong>이름표가 붙은 상자</strong>입니다. 값을 넣어두고 나중에 꺼내 쓸 수 있습니다.</p>
+${cb(`name = "김철수"        # 문자열(str)
+age = 17               # 정수(int)
+height = 172.5         # 실수(float)
+is_student = True      # 논리값(bool)
+print(name, age, height, is_student)`)}
+<h3>자료형 4가지</h3>
+<ul>
+  <li><strong>int</strong> — 정수: 17, -3, 0</li>
+  <li><strong>float</strong> — 실수: 3.14, -0.5</li>
+  <li><strong>str</strong> — 문자열: "안녕", 'Python'</li>
+  <li><strong>bool</strong> — 논리값: True, False</li>
+</ul>
+<h3>type()으로 자료형 확인</h3>
+${cb(`x = 42
+print(type(x))         # <class 'int'>
+y = "안녕"
+print(type(y))         # <class 'str'>`)}
+<div class="warn-box"><strong>⚠️ 주의</strong>변수 이름은 숫자로 시작할 수 없습니다.</div>
+${eb(1,`name = "나의이름"
+age = 0
+hobby = "취미"
+print("이름:", name)
+print("나이:", age)
+print("자료형:", type(age))`)}
+`},
+  {id:2,icon:'🔢',title:'연산자',desc:'산술·비교·논리 연산자',content:`
+<h3>산술 연산자</h3>
+${cb(`a, b = 10, 3
+print(a + b)   # 13
+print(a - b)   # 7
+print(a * b)   # 30
+print(a / b)   # 3.333...
+print(a // b)  # 3   (몫)
+print(a % b)   # 1   (나머지)
+print(a ** b)  # 1000 (거듭제곱)`)}
+<h3>비교 연산자 (결과: True/False)</h3>
+${cb(`print(10 > 3)    # True
+print(10 == 10)  # True
+print(10 != 5)   # True
+print(10 <= 9)   # False`)}
+<h3>논리 연산자</h3>
+${cb(`print(True and False)  # False
+print(True or False)   # True
+print(not True)        # False`)}
+<div class="tip-box"><strong>💡 % 활용</strong>num % 2 == 0 이면 짝수입니다!</div>
+${eb(2,`korean = 85
+math = 92
+english = 78
+total = korean + math + english
+average = total / 3
+print("총점:", total)
+print("평균:", average)
+print("90점 이상?", average >= 90)`)}
+`},
+  {id:3,icon:'🔀',title:'조건문',desc:'if / elif / else 분기 처리',content:`
+<h3>if 단독</h3>
+${cb(`score = 75
+if score >= 60:
+    print("합격")`)}
+<h3>if - else</h3>
+${cb(`score = 45
+if score >= 60:
+    print("합격")
+else:
+    print("불합격")`)}
+<h3>if - elif - else</h3>
+${cb(`score = 82
+if score >= 80:
+    print("A")
+elif score >= 60:
+    print("B")
+else:
+    print("C")`)}
+<div class="tip-box"><strong>💡 들여쓰기</strong>스페이스 4칸으로 블록을 구분합니다. 틀리면 오류!</div>
+${eb(3,`score = 75
+if score >= 90:
+    grade = "A"
+elif score >= 80:
+    grade = "B"
+elif score >= 70:
+    grade = "C"
+elif score >= 60:
+    grade = "D"
+else:
+    grade = "F"
+print("점수:", score, "→ 학점:", grade)`)}
+`},
+  {id:4,icon:'🔁',title:'반복문',desc:'for / while 루프 사용법',content:`
+<h3>for 문</h3>
+${cb(`for i in range(5):
+    print(i, "번째 반복")`)}
+<h3>range() 활용</h3>
+${cb(`for i in range(1, 11):      # 1~10
+    print(i, end=" ")
+
+for i in range(0, 11, 2):   # 0,2,4...10
+    print(i, end=" ")`)}
+<h3>while 문</h3>
+${cb(`count = 1
+while count <= 5:
+    print(count, "번째")
+    count += 1`)}
+<div class="warn-box"><strong>⚠️ 무한 루프 주의</strong>while 조건이 항상 True이면 프로그램이 멈추지 않습니다!</div>
+${eb(4,`dan = 3
+for i in range(1, 10):
+    print(dan, "×", i, "=", dan * i)`)}
+`},
+  {id:5,icon:'📋',title:'함수와 리스트',desc:'def 함수 정의, 리스트 조작',content:`
+<h3>함수 정의와 호출</h3>
+${cb(`def greet(name):
+    print("안녕하세요,", name + "!")
+
+greet("김철수")
+greet("이영희")`)}
+<h3>return으로 값 반환</h3>
+${cb(`def add(a, b):
+    return a + b
+
+result = add(3, 5)
+print(result)   # 8`)}
+<h3>리스트</h3>
+${cb(`fruits = ["사과", "바나나", "오렌지"]
+print(fruits[0])       # 사과
+print(len(fruits))     # 3
+fruits.append("포도")
+for f in fruits:
+    print(f)`)}
+<div class="tip-box"><strong>💡 인덱스</strong>첫 번째 원소는 [0], 마지막은 [-1]로 접근합니다.</div>
+${eb(5,`def average(scores):
+    return sum(scores) / len(scores)
+
+my_scores = [85, 92, 78, 90, 88]
+avg = average(my_scores)
+print("점수:", my_scores)
+print("평균:", avg)`)}
+`}
+];
+
+const SNIPPETS = [
+  {label:'⚡ 구구단',      code:`for i in range(2,10):\n    for j in range(1,10):\n        print(f"{i}×{j}={i*j:2d}",end="  ")\n    print()`},
+  {label:'🌀 피보나치',    code:`a,b=0,1\nfor _ in range(10):\n    print(a,end=" ")\n    a,b=b,a+b`},
+  {label:'🔥 별 피라미드', code:`n=5\nfor i in range(1,n+1):\n    print('*'*i)`},
+  {label:'🏆 소수 판별',   code:`def is_prime(n):\n    if n<2: return False\n    for i in range(2,int(n**.5)+1):\n        if n%i==0: return False\n    return True\nfor n in range(2,30):\n    if is_prime(n): print(n,end=" ")`},
+];
+
+const PROBLEMS = [
+  {id:'p1',title:'두 수의 합',level:'easy',
+   desc:'두 정수 A, B를 입력받아 합을 출력하세요.',
+   iDesc:'두 정수 A B가 공백으로 주어집니다.',oDesc:'A+B를 출력합니다.',
+   ex:[{i:'3 5',o:'8'},{i:'10 20',o:'30'}],
+   tests:[{i:'3 5',o:'8'},{i:'10 20',o:'30'},{i:'-1 1',o:'0'},{i:'100 200',o:'300'}],
+   tpl:'a, b = map(int, input().split())\n# 여기에 코드를 작성하세요\n'},
+  {id:'p2',title:'홀수 / 짝수',level:'easy',
+   desc:'정수 N이 홀수이면 "odd", 짝수이면 "even"을 출력하세요.',
+   iDesc:'정수 N이 주어집니다.',oDesc:'"odd" 또는 "even"을 출력합니다.',
+   ex:[{i:'4',o:'even'},{i:'7',o:'odd'}],
+   tests:[{i:'4',o:'even'},{i:'7',o:'odd'},{i:'0',o:'even'},{i:'-3',o:'odd'}],
+   tpl:'n = int(input())\n# 여기에 코드를 작성하세요\n'},
+  {id:'p3',title:'최댓값 찾기',level:'easy',
+   desc:'N개의 정수를 입력받아 최댓값을 출력하세요.',
+   iDesc:'첫 줄에 N, 둘째 줄에 N개 정수.',oDesc:'최댓값을 출력합니다.',
+   ex:[{i:'5\n3 1 4 1 5',o:'5'},{i:'3\n7 2 9',o:'9'}],
+   tests:[{i:'5\n3 1 4 1 5',o:'5'},{i:'3\n7 2 9',o:'9'},{i:'1\n42',o:'42'}],
+   tpl:'n = int(input())\nnums = list(map(int, input().split()))\n# 여기에 코드를 작성하세요\n'},
+  {id:'p4',title:'1부터 N까지의 합',level:'easy',
+   desc:'1부터 N까지의 합을 출력하세요.',
+   iDesc:'정수 N이 주어집니다.',oDesc:'1+2+...+N을 출력합니다.',
+   ex:[{i:'10',o:'55'},{i:'100',o:'5050'}],
+   tests:[{i:'10',o:'55'},{i:'100',o:'5050'},{i:'1',o:'1'},{i:'5',o:'15'}],
+   tpl:'n = int(input())\n# 여기에 코드를 작성하세요\n'},
+  {id:'p5',title:'구구단 출력',level:'mid',
+   desc:'N단 구구단을 출력하세요.',
+   iDesc:'정수 N (2 ≤ N ≤ 9).',oDesc:'N×1=... 형태로 9줄 출력.',
+   ex:[{i:'3',o:'3×1=3\n3×2=6\n3×3=9\n3×4=12\n3×5=15\n3×6=18\n3×7=21\n3×8=24\n3×9=27'}],
+   tests:[{i:'3',o:'3×1=3\n3×2=6\n3×3=9\n3×4=12\n3×5=15\n3×6=18\n3×7=21\n3×8=24\n3×9=27'},{i:'2',o:'2×1=2\n2×2=4\n2×3=6\n2×4=8\n2×5=10\n2×6=12\n2×7=14\n2×8=16\n2×9=18'}],
+   tpl:'n = int(input())\n# 여기에 코드를 작성하세요\n'},
+  {id:'p6',title:'소수 판별',level:'mid',
+   desc:'N이 소수이면 "prime", 아니면 "not prime"을 출력하세요.',
+   iDesc:'정수 N (N ≥ 2).',oDesc:'"prime" 또는 "not prime".',
+   ex:[{i:'7',o:'prime'},{i:'12',o:'not prime'}],
+   tests:[{i:'7',o:'prime'},{i:'12',o:'not prime'},{i:'2',o:'prime'},{i:'97',o:'prime'},{i:'100',o:'not prime'}],
+   tpl:'n = int(input())\n# 여기에 코드를 작성하세요\n'},
+];
+
+/* ─── 헬퍼 ─── */
+function cb(code){
+  const escaped = code
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  const tokens = [];
+  let result = escaped;
+
+  /* 1단계: 문자열 리터럴을 플레이스홀더로 치환 (가장 먼저 — 내부 키워드 오염 방지) */
+  result = result.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, (m)=>{
+    const idx = tokens.length;
+    tokens.push(`<span class="st">${m}</span>`);
+    return `\x00${idx}\x00`;
+  });
+
+  /* 2단계: 주석 플레이스홀더 */
+  result = result.replace(/(#[^\n]*)/g, (m)=>{
+    const idx = tokens.length;
+    tokens.push(`<span class="cm">${m}</span>`);
+    return `\x00${idx}\x00`;
+  });
+
+  /* 3단계: 내장 함수 */
+  result = result.replace(/\b(print|input|range|len|sum|type|int|float|str|list|map|def|return|append)\b/g,
+    '<span class="fn">$1</span>');
+
+  /* 4단계: 키워드 */
+  result = result.replace(/\b(if|elif|else|for|while|in|and|or|not|True|False|end)\b/g,
+    '<span class="kw">$1</span>');
+
+  /* 5단계: 플레이스홀더 복원 */
+  result = result.replace(/\x00(\d+)\x00/g, (_, i)=>tokens[parseInt(i)]);
+
+  return `<div class="code-block"><div class="code-hd"><span class="code-lang">python</span></div><pre>${result}</pre></div>`;
+}
+function eb(id, code){
+  return `<div class="ed-wrap">
+    <div class="ed-hd">
+      <span class="ed-title">직접 실행해 보세요</span>
+      <button class="run-btn" id="rb${id}" onclick="runEd('${id}')" disabled>▶ 실행</button>
+    </div>
+    <textarea class="ed-ta" id="ec${id}" spellcheck="false">${code.trim()}</textarea>
+    <div class="out-area idle" id="eo${id}">▶ 실행 버튼을 누르면 결과가 나옵니다.</div>
+  </div>`;
+}
+
+/* ─── Pyodide ─── */
+let pyodide = null;
+const solved = new Set(JSON.parse(localStorage.getItem('pysolved')||'[]'));
+
+async function initPy(){
+  try{
+    pyodide = await loadPyodide();
+    document.getElementById('pyBadge').textContent = 'Python 준비됨 ✓';
+    document.getElementById('pyBadge').classList.add('ready');
+    document.querySelectorAll('.run-btn').forEach(b=>b.disabled=false);
+    document.querySelectorAll('.submit-btn').forEach(b=>b.disabled=false);
+  }catch(e){
+    document.getElementById('pyBadge').textContent = '로드 실패';
+  }
+}
+
+async function runPy(code, inp=''){
+  if(!pyodide) return {out:'Python 로딩 중입니다.',err:true};
+  pyodide.globals.set('__il__', inp.split('\n'));
+  const setup = `
+import sys,builtins
+from io import StringIO
+_l=__il__;_i=[0]
+def _fi(p=''):
+    v=_l[_i[0]] if _i[0]<len(_l) else '';_i[0]+=1;return v
+builtins.input=_fi
+sys.stdout=StringIO();sys.stderr=StringIO()
+`;
+  try{
+    await pyodide.runPythonAsync(setup+code);
+    return {out:pyodide.globals.get('sys').stdout.getvalue()||'(출력 없음)',err:false};
+  }catch(e){return {out:String(e),err:true};}
+}
+
+async function runEd(id){
+  const btn=document.getElementById('rb'+id), out=document.getElementById('eo'+id);
+  btn.disabled=true; btn.textContent='실행 중...';
+  out.className='out-area idle'; out.textContent='실행 중...';
+  const r = await runPy(document.getElementById('ec'+id).value);
+  out.className='out-area'+(r.err?' error':''); out.textContent=r.out;
+  btn.disabled=false; btn.textContent='▶ 실행';
+}
+
+async function runFree(){
+  const btn=document.getElementById('freeRunBtn'), out=document.getElementById('freeOut');
+  btn.disabled=true; btn.textContent='실행 중...';
+  out.className='out-area idle'; out.textContent='실행 중...';
+  const r = await runPy(document.getElementById('freeCode').value);
+  out.className='out-area'+(r.err?' error':''); out.textContent=r.out;
+  btn.disabled=false; btn.textContent='▶ 실행';
+}
+
+/* ─── 탭 + 서브메뉴 시스템 ─── */
+let curTab = 'home';
+let curLesson = -1;
+
+/* 각 탭의 서브메뉴 구성 */
+const TAB_SUB = {
+  home: null,  // 서브메뉴 없음
+  lecture: {
+    hd: '📗 챕터 목록',
+    build(list){
+      CHAPTERS.forEach((c,i)=>{
+        const btn = document.createElement('button');
+        btn.className = 'sm-item';
+        btn.id = 'sm-lec-'+i;
+        btn.innerHTML = `<span class="sm-icon">${c.icon}</span><span class="sm-label">Ch.${i+1} ${c.title}</span>`;
+        btn.onclick = ()=>{ setSubActive('sm-lec-'+i); showLesson(i); };
+        list.appendChild(btn);
+      });
+    }
+  },
+  practice: {
+    hd: '🔥 실습',
+    build(list){
+      const items = [
+        {label:'자유 실습', icon:'✏️', act:()=>showPractice('free')},
+        {label:'예제 모음', icon:'📋', act:()=>showPractice('snip')},
+      ];
+      items.forEach((it,i)=>{
+        const btn = document.createElement('button');
+        btn.className = 'sm-item';
+        btn.id = 'sm-prac-'+i;
+        btn.innerHTML = `<span class="sm-icon">${it.icon}</span><span class="sm-label">${it.label}</span>`;
+        btn.onclick = ()=>{ setSubActive('sm-prac-'+i); it.act(); };
+        list.appendChild(btn);
+      });
+    }
+  },
+  judge: {
+    hd: '🏆 포켓몬 배틀',
+    build(list){
+      const lvLabel = {easy:'쉬움',mid:'보통',hard:'어려움'};
+      PROBLEMS.forEach((p,i)=>{
+        const btn = document.createElement('button');
+        btn.className = 'sm-item';
+        btn.id = 'sm-jg-'+i;
+        const bdgCls = solved.has(p.id)?'solved':p.level;
+        const bdgTxt = solved.has(p.id)?'✓':lvLabel[p.level];
+        btn.innerHTML = `<span class="sm-icon">›</span><span class="sm-label">${p.title}</span><span class="sm-badge ${bdgCls}">${bdgTxt}</span>`;
+        btn.onclick = ()=>{ setSubActive('sm-jg-'+i); openProblem(p.id); };
+        list.appendChild(btn);
+      });
+    }
+  }
+};
+
+function selectTab(name){
+  curTab = name;
+  /* 탭 활성화 */
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+
+  /* 페이지 전환 */
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+
+  /* 서브메뉴 구성 */
+  const sub = document.getElementById('submenu');
+  const cfg = TAB_SUB[name];
+  if(!cfg){
+    sub.classList.remove('open');
+    return;
+  }
+  document.getElementById('smHd').textContent = cfg.hd;
+  const list = document.getElementById('smList');
+  list.innerHTML = '';
+  cfg.build(list);
+  sub.classList.add('open');
+
+  /* 강의 탭: 이전에 보던 챕터 복원 */
+  if(name==='lecture' && curLesson>=0){
+    document.getElementById('sm-lec-'+curLesson)?.classList.add('active');
+  }
+  /* 실습 탭: 기본 자유실습 선택 */
+  if(name==='practice'){
+    setTimeout(()=>{
+      const first = document.getElementById('sm-prac-0');
+      if(first){ first.classList.add('active'); showPractice('free'); }
+    },20);
+  }
+}
+
+function setSubActive(id){
+  document.querySelectorAll('.sm-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+}
+
+/* ─── 강의 ─── */
+function showLesson(idx){
+  curLesson = idx;
+  const c = CHAPTERS[idx];
+  document.getElementById('lsTitle').textContent = `Ch.${idx+1} — ${c.icon} ${c.title}`;
+  document.getElementById('progFill').style.width = ((idx+1)/CHAPTERS.length*100)+'%';
+  document.getElementById('lsBody').innerHTML = c.content;
+  document.querySelectorAll('.run-btn').forEach(b=>{ if(pyodide) b.disabled=false; });
+  const nav = document.getElementById('lsNav');
+  nav.innerHTML =
+    (idx>0 ? `<button onclick="jumpLesson(${idx-1})">← 이전</button>` : '') +
+    (idx<CHAPTERS.length-1
+      ? `<button class="primary" onclick="jumpLesson(${idx+1})">다음 →</button>`
+      : `<button class="primary" onclick="selectTab('judge')">저지 풀러 가기 →</button>`);
+}
+
+function jumpLesson(idx){
+  setSubActive('sm-lec-'+idx);
+  showLesson(idx);
+}
+
+/* ─── 실습 ─── */
+function showPractice(mode){
+  document.getElementById('snipArea').style.display = (mode==='snip'?'block':'none');
+}
+
+function buildSnip(){
+  const g = document.getElementById('snipGrid');
+  SNIPPETS.forEach(s=>{
+    const el = document.createElement('div');
+    el.className = 'snip-card';
+    el.innerHTML = `<div class="sl">${s.label}</div><div class="sp">${s.code.split('\n')[0]}...</div>`;
+    el.onclick = ()=>{
+      document.getElementById('freeCode').value = s.code;
+      setSubActive('sm-prac-0');
+      showPractice('free');
+    };
+    g.appendChild(el);
+  });
+}
+
+/* ─── 저지 ─── */
+function buildJudge(){
+  const g = document.getElementById('jgGrid'); g.innerHTML='';
+  const lvLabel = {easy:'쉬움',mid:'보통',hard:'어려움'};
+  PROBLEMS.forEach((p,pi)=>{
+    const el = document.createElement('div');
+    el.className = 'jg-card';
+    const isSolved = solved.has(p.id);
+    el.innerHTML = `
+      <div style="display:flex;align-items:start;justify-content:space-between">
+        <span class="badge ${p.level}">${lvLabel[p.level]}</span>
+        <div class="jstat ${isSolved?'solved':''}">${isSolved?'✓':''}</div>
+      </div>
+      <div class="jt">${p.title}</div>
+      <div class="jd">${p.desc}</div>`;
+    el.onclick = ()=>{
+      selectTab('judge');
+      setTimeout(()=>{ setSubActive('sm-jg-'+pi); openProblem(p.id); }, 30);
+    };
+    g.appendChild(el);
+  });
+}
+
+function openProblem(id){
+  const p = PROBLEMS.find(x=>x.id===id); if(!p) return;
+  document.getElementById('jgListArea').style.display = 'none';
+  document.getElementById('jgDetailArea').style.display = 'block';
+  const lvLabel = {easy:'쉬움',mid:'보통',hard:'어려움'};
+  document.getElementById('jgDetail').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap">
+      <button onclick="backJudge()" style="padding:5px 12px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:12px;font-family:var(--sans);font-weight:700;cursor:pointer;transition:color .15s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">← 목록</button>
+      <span class="badge ${p.level}">${lvLabel[p.level]}</span>
+      <span style="font-family:var(--sans);font-weight:800;font-size:1.1rem">${p.title}</span>
+    </div>
+    <div class="prob-box">
+      <h3>문제</h3><p>${p.desc}</p>
+      <h3 style="margin-top:.75rem">입력</h3><p>${p.iDesc}</p>
+      <h3 style="margin-top:.75rem">출력</h3><p>${p.oDesc}</p>
+    </div>
+    ${p.ex.map((e,i)=>`
+    <div class="prob-box">
+      <h3>예제 ${i+1}</h3>
+      <div class="io-grid">
+        <div class="io-box"><div class="io-label">입력</div><div class="io-val">${e.i.replace(/\n/g,'<br>')}</div></div>
+        <div class="io-box"><div class="io-label">출력</div><div class="io-val">${e.o.replace(/\n/g,'<br>')}</div></div>
+      </div>
+    </div>`).join('')}
+    <div class="ed-wrap">
+      <div class="ed-hd"><span class="ed-title">solution.py</span></div>
+      <textarea class="ed-ta" id="jcode" spellcheck="false" style="min-height:150px">${p.tpl}</textarea>
+    </div>
+    <div class="submit-row">
+      <button class="submit-btn" id="subBtn" onclick="submitCode('${p.id}')" ${pyodide?'':'disabled'}>제출하기</button>
+      <div class="verdict" id="vrd"></div>
+    </div>
+    <div id="jlog" style="margin-top:.75rem;font-family:var(--mono);font-size:11px;color:var(--text3);line-height:1.7"></div>
+  `;
+}
+
+async function submitCode(pid){
+  const p = PROBLEMS.find(x=>x.id===pid);
+  const code = document.getElementById('jcode').value;
+  const btn=document.getElementById('subBtn'), vrd=document.getElementById('vrd'), log=document.getElementById('jlog');
+  btn.disabled=true; btn.textContent='채점 중...'; vrd.className='verdict'; log.textContent='';
+  let ok=true, logs=[];
+  for(let i=0;i<p.tests.length;i++){
+    const t=p.tests[i];
+    const r=await runPy(code, t.i);
+    const got=r.out.trim(), exp=t.o.trim(), pass=!r.err&&got===exp;
+    if(!pass) ok=false;
+    logs.push(`테스트 ${i+1}: ${pass?'✓ 정답':'✗ 오답'} | 입력: ${t.i.replace(/\n/,' ')} | 기대: ${exp} | 출력: ${got}`);
+  }
+  log.textContent = logs.join('\n');
+  if(ok){
+    vrd.className='verdict ac show'; vrd.innerHTML='✓ 정답입니다!';
+    solved.add(pid); localStorage.setItem('pysolved', JSON.stringify([...solved]));
+    /* 서브메뉴 뱃지 갱신 */
+    const idx = PROBLEMS.findIndex(x=>x.id===pid);
+    const smBtn = document.getElementById('sm-jg-'+idx);
+    if(smBtn){ const b=smBtn.querySelector('.sm-badge'); if(b){b.className='sm-badge solved';b.textContent='✓';} }
+  }else{
+    vrd.className='verdict wa show'; vrd.innerHTML='✗ 오답입니다. 다시 확인해 보세요.';
+  }
+  btn.disabled=false; btn.textContent='제출하기';
+}
+
+function backJudge(){
+  document.getElementById('jgListArea').style.display='block';
+  document.getElementById('jgDetailArea').style.display='none';
+  buildJudge();
+}
+
+/* ─── 홈 챕터 카드 ─── */
+function buildHome(){
+  const g = document.getElementById('chGrid');
+  CHAPTERS.forEach((c,i)=>{
+    const el = document.createElement('div');
+    el.className = 'ch-card';
+    el.innerHTML = `<div class="cn">Chapter ${i+1}</div><div class="ct">${c.icon} ${c.title}</div><div class="cd">${c.desc}</div>`;
+    el.onclick = ()=>{
+      selectTab('lecture');
+      setTimeout(()=>{ setSubActive('sm-lec-'+i); showLesson(i); }, 40);
+    };
+    g.appendChild(el);
+  });
+}
+
+/* ─── 초기화 ─── */
+buildHome();
+buildSnip();
+buildJudge();
+initPy();
+</script>
+</body>
+</html>

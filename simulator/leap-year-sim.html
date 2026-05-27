@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>윤년 판별 코드 완성하기</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:#0f1117;color:#e8eaf6;font-family:'Nanum Gothic',sans-serif;display:flex;flex-direction:column}
+.header{flex-shrink:0;height:50px;background:rgba(15,17,23,.97);border-bottom:1px solid #2e3350;display:flex;align-items:center;padding:0 1rem;gap:10px}
+.h-back{color:#8892b0;font-size:13px;font-weight:700;text-decoration:none}.h-back:hover{color:#e8eaf6}
+.h-div{width:1px;height:18px;background:#2e3350}
+.h-title{font-size:14px;font-weight:700;color:#8892b0;flex:1}
+.score-chip{font-size:15px;font-weight:800;color:#4f8ef7;background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.25);border-radius:8px;padding:2px 10px}
+.tabbar{flex-shrink:0;height:42px;background:#13161f;border-bottom:1px solid #2e3350;display:flex;padding:0 .75rem;gap:2px;overflow-x:auto}
+.tbtn{padding:0 13px;font-size:13px;font-weight:700;color:#4a5272;border:none;background:none;cursor:pointer;font-family:'Nanum Gothic',sans-serif;border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0}
+.tbtn:hover{color:#8892b0}.tbtn.on{color:#4f8ef7;border-bottom-color:#4f8ef7}
+.tbtn.done{color:#34d399}.tbtn.done.on{border-bottom-color:#34d399}
+.t-dot{width:18px;height:18px;border-radius:50%;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;background:#22263a;color:#4a5272}
+.tbtn.on .t-dot{background:rgba(79,142,247,.2);color:#4f8ef7}
+.tbtn.done .t-dot{background:rgba(52,211,153,.2);color:#34d399}
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column;padding:.625rem .75rem;gap:.625rem}
+/* 개요 */
+.ov-wrap{flex:1;overflow-y:auto}
+.ov-h{font-size:1.1rem;font-weight:800;margin-bottom:.3rem}
+.ov-p{font-size:13px;color:#8892b0;margin-bottom:.875rem;line-height:1.6}
+.rule-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:.875rem}
+.rule-card{background:#1a1d27;border:1px solid #2e3350;border-radius:10px;padding:.875rem 1rem}
+.rule-card.ok{border-left:3px solid #34d399}.rule-card.ng{border-left:3px solid #f87171}.rule-card.re{border-left:3px solid #4f8ef7}
+.rc-h{font-size:13px;font-weight:800;margin-bottom:.35rem}
+.rc-b{font-size:12px;color:#8892b0;line-height:1.6}
+.rc-b code{font-family:'JetBrains Mono',monospace;font-size:11px;font-variant-ligatures:none;font-feature-settings:'liga' 0,'calt' 0;background:#22263a;padding:1px 5px;border-radius:4px;color:#89dceb}
+.vt-wrap{background:#1a1d27;border:1px solid #2e3350;border-radius:10px;overflow:hidden;margin-bottom:.875rem}
+.vt-hd{padding:.4rem 1rem;font-size:11px;font-weight:700;color:#4a5272;border-bottom:1px solid #2e3350;letter-spacing:.05em}
+table{width:100%;border-collapse:collapse}
+th{background:#22263a;font-size:12px;font-weight:700;color:#8892b0;padding:.4rem .875rem;text-align:center}
+td{font-size:12px;padding:.4rem .875rem;text-align:center;border-top:1px solid #22263a;font-family:'JetBrains Mono',monospace;font-variant-ligatures:none;font-feature-settings:'liga' 0,'calt' 0}
+.yr{color:#89dceb;font-weight:700}.ok-{color:#34d399}.ng-{color:#f87171}
+.lp{color:#34d399;font-weight:800}.nl{color:#f87171;font-weight:800}
+.ov-btn{display:block;width:100%;padding:11px;border-radius:10px;background:#4f8ef7;border:none;color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nanum Gothic',sans-serif;margin-top:.5rem}
+.ov-btn:hover{background:#3a7de8}
+/* 퀴즈 */
+.quiz-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:.625rem}
+.pool-area{flex-shrink:0;background:#1a1d27;border:1px solid #2e3350;border-radius:10px;padding:.5rem .875rem}
+.pool-lbl{font-size:11px;font-weight:700;color:#4a5272;letter-spacing:.04em;margin-bottom:.5rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.leg{display:inline-flex;align-items:center;gap:4px;font-size:11px}
+.ld{width:8px;height:8px;border-radius:50%}
+.pool-cards{display:flex;flex-wrap:wrap;gap:7px;min-height:30px;align-items:center}
+/* 드래그 카드 */
+.dc{padding:5px 12px;border-radius:7px;border:1px solid #2e3350;background:#22263a;font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;font-variant-ligatures:none;font-feature-settings:'liga' 0,'calt' 0;color:#e8eaf6;cursor:grab;user-select:none;white-space:nowrap}
+.dc:hover{border-color:#4a5272}
+.dc.dragging{opacity:.3}
+.dc-cond{border-color:#fbbf24;color:#fde68a;background:#1e1800}
+.dc-print{border-color:#34d399;color:#6ee7b7;background:#081a10}
+/* 문제 카드 */
+.prob-card{background:#1a1d27;border:1px solid #2e3350;border-radius:10px;padding:.625rem .875rem;display:flex;flex-direction:column;gap:.375rem;overflow:hidden;transition:border-color .3s}
+.prob-card.done{border-color:#34d399}
+.p-num{font-size:11px;font-weight:700;color:#4a5272;letter-spacing:.04em}
+.p-title{font-size:14px;color:#e8eaf6;line-height:1.6}
+.p-title strong{font-weight:800;font-size:15px}
+/* 코드 구조 */
+.code-struct{flex:1;background:#0d1117;border:1px solid #22263a;border-radius:8px;padding:.5rem .875rem;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-variant-ligatures:none;font-feature-settings:'liga' 0,'calt' 0;display:flex;flex-direction:column;justify-content:space-evenly;overflow:hidden}
+.cl{display:flex;align-items:center;gap:5px;padding:2px 0}
+.ck{color:#cba6f7;font-weight:600;white-space:nowrap}
+.ct{color:#cdd6f4;white-space:nowrap}
+.cc{color:#585b70;font-size:11px;white-space:nowrap}
+.cv{color:#89dceb;white-space:nowrap}
+.i1{display:inline-block;width:18px;flex-shrink:0}
+.i2{display:inline-block;width:36px;flex-shrink:0}
+.i3{display:inline-block;width:54px;flex-shrink:0}
+/* 슬롯 */
+.slot{display:inline-flex;align-items:center;justify-content:center;min-width:110px;height:26px;padding:0 8px;border:1.5px dashed #2e3350;border-radius:6px;background:#13161f;font-size:12px;font-family:'Nanum Gothic',sans-serif;font-weight:700;cursor:default;flex-shrink:0;white-space:nowrap;font-variant-ligatures:none;font-feature-settings:'liga' 0,'calt' 0}
+.slot.over{border-color:#4f8ef7;background:#0d1829;border-style:solid}
+.slot.ok{border-style:solid;border-color:#34d399;background:#081a10;color:#34d399;font-family:'JetBrains Mono',monospace;font-size:12px;min-width:auto}
+.slot.ng{border-style:solid;border-color:#f87171;background:#1a0808;color:#f87171;font-family:'JetBrains Mono',monospace;font-size:12px;animation:shake .3s ease}
+.sh-c{color:#fbbf24}.sh-p{color:#34d399}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.btn-row{flex-shrink:0;display:flex;gap:8px}
+.btn-c{padding:7px 16px;border-radius:8px;border:1px solid #2e3350;background:#1a1d27;color:#8892b0;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nanum Gothic',sans-serif}
+.btn-c:hover{background:#22263a;color:#e8eaf6;border-color:#4a5272}
+.btn-reset{margin-left:auto}
+/* 모달 */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:200}
+.modal-bg.show{display:flex}
+.modal{background:#1a1d27;border:1px solid #2e3350;border-radius:16px;padding:2rem 2.5rem;text-align:center;max-width:340px;width:90%}
+.me{font-size:3rem;margin-bottom:.75rem}.mt{font-size:1.2rem;font-weight:800;margin-bottom:.4rem}
+.md{font-size:13px;color:#8892b0;line-height:1.7;margin-bottom:1.25rem}
+.mbtns{display:flex;gap:8px}
+.mbtn{flex:1;padding:9px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nanum Gothic',sans-serif}
+.mbtn-p{background:#4f8ef7;border:none;color:#fff}.mbtn-p:hover{background:#3a7de8}
+.mbtn-s{background:#1a1d27;border:1px solid #2e3350;color:#8892b0}.mbtn-s:hover{border-color:#4f8ef7;color:#4f8ef7}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#2e3350;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="header">
+  <a class="h-back" href="../index.html">← 홈</a>
+  <div class="h-div"></div>
+  <div class="h-title">🗓 윤년 판별 코드 완성하기</div>
+  <div style="font-size:13px;color:#8892b0">맞힌 슬롯 <span class="score-chip" id="scoreChip">0/0</span></div>
+</div>
+<div class="tabbar">
+  <button class="tbtn on" id="tab-ov" onclick="go(-1)">📋 개요</button>
+  <button class="tbtn" id="tab-0" onclick="go(0)">방법 1 <span class="t-dot" id="td-0">✎</span></button>
+  <button class="tbtn" id="tab-1" onclick="go(1)">방법 2 <span class="t-dot" id="td-1">✎</span></button>
+  <button class="tbtn" id="tab-2" onclick="go(2)">방법 3 <span class="t-dot" id="td-2">✎</span></button>
+  <button class="tbtn" id="tab-3" onclick="go(3)">방법 4 <span class="t-dot" id="td-3">✎</span></button>
+</div>
+<div class="main">
+  <div class="ov-wrap" id="sc-ov">
+    <div class="ov-h">🗓 윤년(Leap Year)이란?</div>
+    <div class="ov-p">1년이 366일인 해로 2월이 29일까지 있습니다. 아래 3가지 규칙으로 판단합니다.</div>
+    <div class="rule-grid">
+      <div class="rule-card ok"><div class="rc-h">✅ 규칙 1 — 4의 배수</div><div class="rc-b"><code>year % 4 == 0</code> 이면 일단 윤년<br>예) 2024 ÷ 4 = 506 → 윤년</div></div>
+      <div class="rule-card ng"><div class="rc-h">❌ 규칙 2 — 100의 배수 예외</div><div class="rc-b"><code>year % 100 == 0</code> 이면 평년<br>예) 1900 → 4배수지만 100배수 → 평년</div></div>
+      <div class="rule-card re"><div class="rc-h">✅ 규칙 3 — 400의 배수 예외</div><div class="rc-b"><code>year % 400 == 0</code> 이면 다시 윤년<br>예) 2000 → 100배수지만 400배수 → 윤년</div></div>
+    </div>
+    <div class="vt-wrap">
+      <div class="vt-hd">🔍 검증 테이블</div>
+      <table>
+        <tr><th>연도</th><th>4배수</th><th>100배수</th><th>400배수</th><th>결과</th></tr>
+        <tr><td class="yr">2024</td><td class="ok-">✓</td><td class="ng-">✗</td><td class="ng-">✗</td><td class="lp">윤년</td></tr>
+        <tr><td class="yr">1900</td><td class="ok-">✓</td><td class="ok-">✓</td><td class="ng-">✗</td><td class="nl">평년</td></tr>
+        <tr><td class="yr">2000</td><td class="ok-">✓</td><td class="ok-">✓</td><td class="ok-">✓</td><td class="lp">윤년</td></tr>
+        <tr><td class="yr">2023</td><td class="ng-">✗</td><td class="ng-">✗</td><td class="ng-">✗</td><td class="nl">평년</td></tr>
+        <tr><td class="yr">1800</td><td class="ok-">✓</td><td class="ok-">✓</td><td class="ng-">✗</td><td class="nl">평년</td></tr>
+        <tr><td class="yr">1600</td><td class="ok-">✓</td><td class="ok-">✓</td><td class="ok-">✓</td><td class="lp">윤년</td></tr>
+      </table>
+    </div>
+    <button class="ov-btn" onclick="go(0)">방법 1부터 시작하기 →</button>
+  </div>
+  <div class="quiz-wrap" id="sc-quiz" style="display:none">
+    <div class="pool-area">
+      <div class="pool-lbl">📋 드래그해서 빈칸에 놓으세요
+        <span class="leg"><span class="ld" style="background:#fbbf24"></span>조건식</span>
+        <span class="leg"><span class="ld" style="background:#34d399"></span>print문</span>
+      </div>
+      <div class="pool-cards" id="poolCards"></div>
+    </div>
+    <div style="flex:1;overflow:hidden" id="probWrap"></div>
+    <div class="btn-row">
+      <button class="btn-c" onclick="showAns()">정답 보기</button>
+      <button class="btn-c btn-reset" onclick="resetCur()">↺ 초기화</button>
+    </div>
+  </div>
+</div>
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="me" id="mEmoji">🎉</div><div class="mt" id="mTitle"></div>
+    <div class="md" id="mDesc"></div>
+    <div class="mbtns">
+      <button class="mbtn mbtn-s" onclick="closeModal()">계속 풀기</button>
+      <button class="mbtn mbtn-p" id="mNext" onclick="nextM()">다음 방법 →</button>
+    </div>
+  </div>
+</div>
+<script>
+
+/* ════ 데이터 정의 ════
+   KEY 규칙: 모든 값은 JS 변수로 정의해서 따옴표 혼용 문제 완전 제거
+*/
+
+// 카드 값 상수
+const C4    = 'year % 4 == 0';
+const C100  = 'year % 100 == 0';
+const C400  = 'year % 400 == 0';
+const C4N   = 'year % 4 != 0';
+const C100N = 'year % 100 != 0';
+const CAND  = 'year % 4 == 0 and year % 100 != 0';
+const C400V = 'year % 400 == 0';
+const CAND_W= 'year % 4 == 0 or year % 100 != 0';
+const C400N = 'year % 400 != 0';
+
+const PY    = 'print(year, "년은 윤년입니다.")';
+const PN    = 'print(year, "년은 윤년이 아닙니다.")';
+
+const METHODS = [
+  /* ── 방법 1: 4→100→400 중첩 if ── */
+  {
+    name:'방법 1', desc:'4 → 100 → 400 순서 (중첩 if)',
+    title:'<strong>4의 배수</strong>인지 먼저 확인 후, 안쪽에서 <strong>100의 배수</strong>와 <strong>400의 배수</strong>를 중첩 if로 검사하는 코드를 완성하세요.',
+    cards:[
+      {v:C4,   cls:'dc-cond'}, {v:C100, cls:'dc-cond'}, {v:C400, cls:'dc-cond'},
+      {v:C4N,  cls:'dc-cond'},
+      {v:PY,   cls:'dc-print'}, {v:PY,  cls:'dc-print'},
+      {v:PN,   cls:'dc-print'}, {v:PN,  cls:'dc-print'},
+    ],
+    slots:[
+      {id:'m0s0',ans:C4,  cls:'dc-cond',  hint:'조건식'},
+      {id:'m0s1',ans:C100,cls:'dc-cond',  hint:'조건식'},
+      {id:'m0s2',ans:C400,cls:'dc-cond',  hint:'조건식'},
+      {id:'m0s3',ans:PY,  cls:'dc-print', hint:'print문'},
+      {id:'m0s4',ans:PN,  cls:'dc-print', hint:'print문'},
+      {id:'m0s5',ans:PY,  cls:'dc-print', hint:'print문'},
+      {id:'m0s6',ans:PN,  cls:'dc-print', hint:'print문'},
+    ],
+    lines:[
+      {t:'plain'},
+      {t:'if',    sid:'m0s0', cm:'# 4의 배수?'},
+      {t:'in1if', sid:'m0s1', cm:'# 100의 배수?'},
+      {t:'in2if', sid:'m0s2', cm:'# 400의 배수?'},
+      {t:'in3',   sid:'m0s3', cm:'# 400배수→윤년'},
+      {t:'in2else'},
+      {t:'in3',   sid:'m0s4', cm:'# 100배수(400제외)→평년'},
+      {t:'in1else'},
+      {t:'in2',   sid:'m0s5', cm:'# 4배수(100제외)→윤년'},
+      {t:'else'},
+      {t:'in1',   sid:'m0s6', cm:'# 4배수 아님→평년'},
+    ]
+  },
+  /* ── 방법 2: 400→100→4 if-elif-else ── */
+  {
+    name:'방법 2', desc:'400 → 100 → 4 순서 (if-elif-else)',
+    title:'<strong>400의 배수</strong>이면 윤년, <strong>100의 배수</strong>이면 평년, <strong>4의 배수</strong>이면 윤년, 나머지는 평년을 출력하는 코드를 완성하세요.',
+    cards:[
+      {v:C400, cls:'dc-cond'}, {v:C100, cls:'dc-cond'}, {v:C4,   cls:'dc-cond'},
+      {v:C4N,  cls:'dc-cond'}, {v:C100N,cls:'dc-cond'},
+      {v:PY,   cls:'dc-print'}, {v:PY,  cls:'dc-print'},
+      {v:PN,   cls:'dc-print'}, {v:PN,  cls:'dc-print'},
+    ],
+    slots:[
+      {id:'m1s0',ans:C400,cls:'dc-cond',  hint:'조건식'},
+      {id:'m1s1',ans:PY,  cls:'dc-print', hint:'print문'},
+      {id:'m1s2',ans:C100,cls:'dc-cond',  hint:'조건식'},
+      {id:'m1s3',ans:PN,  cls:'dc-print', hint:'print문'},
+      {id:'m1s4',ans:C4,  cls:'dc-cond',  hint:'조건식'},
+      {id:'m1s5',ans:PY,  cls:'dc-print', hint:'print문'},
+      {id:'m1s6',ans:PN,  cls:'dc-print', hint:'print문'},
+    ],
+    lines:[
+      {t:'plain'},
+      {t:'if',   sid:'m1s0', cm:'# 400의 배수 → 윤년'},
+      {t:'in1',  sid:'m1s1'},
+      {t:'elif', sid:'m1s2', cm:'# 100의 배수 → 평년'},
+      {t:'in1',  sid:'m1s3'},
+      {t:'elif', sid:'m1s4', cm:'# 4의 배수 → 윤년'},
+      {t:'in1',  sid:'m1s5'},
+      {t:'else'},
+      {t:'in1',  sid:'m1s6', cm:'# 나머지 → 평년'},
+    ]
+  },
+  /* ── 방법 3: 100→400→4 중첩if+elif ── */
+  {
+    name:'방법 3', desc:'100 → 400 → 4 순서 (중첩 if + elif)',
+    title:'<strong>100의 배수</strong>인지 먼저 확인 후 <strong>400의 배수</strong>를 재확인, 아니면 <strong>4의 배수</strong>인지 확인하는 코드를 완성하세요.',
+    cards:[
+      {v:C100, cls:'dc-cond'}, {v:C400, cls:'dc-cond'}, {v:C4,   cls:'dc-cond'},
+      {v:C100N,cls:'dc-cond'}, {v:C4N,  cls:'dc-cond'},
+      {v:PY,   cls:'dc-print'}, {v:PY,  cls:'dc-print'},
+      {v:PN,   cls:'dc-print'}, {v:PN,  cls:'dc-print'},
+    ],
+    slots:[
+      {id:'m2s0',ans:C100,cls:'dc-cond',  hint:'조건식'},
+      {id:'m2s1',ans:C400,cls:'dc-cond',  hint:'조건식'},
+      {id:'m2s2',ans:PY,  cls:'dc-print', hint:'print문'},
+      {id:'m2s3',ans:PN,  cls:'dc-print', hint:'print문'},
+      {id:'m2s4',ans:C4,  cls:'dc-cond',  hint:'조건식'},
+      {id:'m2s5',ans:PY,  cls:'dc-print', hint:'print문'},
+      {id:'m2s6',ans:PN,  cls:'dc-print', hint:'print문'},
+    ],
+    lines:[
+      {t:'plain'},
+      {t:'if',    sid:'m2s0', cm:'# 100의 배수?'},
+      {t:'in1if', sid:'m2s1', cm:'# 400의 배수?'},
+      {t:'in2',   sid:'m2s2', cm:'# 400배수→윤년'},
+      {t:'in1else'},
+      {t:'in2',   sid:'m2s3', cm:'# 100배수(400제외)→평년'},
+      {t:'elif',  sid:'m2s4', cm:'# 4의 배수?'},
+      {t:'in1',   sid:'m2s5', cm:'# 4배수(100제외)→윤년'},
+      {t:'else'},
+      {t:'in1',   sid:'m2s6', cm:'# 나머지→평년'},
+    ]
+  },
+  /* ── 방법 4: 논리 연산자 ── */
+  {
+    name:'방법 4', desc:'논리 연산자 and / or',
+    title:'<strong>4의 배수이면서 100의 배수가 아닌 경우</strong>, 또는 <strong>400의 배수인 경우</strong>를 and/or로 표현하는 코드를 완성하세요.',
+    cards:[
+      {v:CAND,  cls:'dc-cond'}, {v:C400V, cls:'dc-cond'},
+      {v:CAND_W,cls:'dc-cond'}, {v:C400N, cls:'dc-cond'},
+      {v:PY,    cls:'dc-print'}, {v:PN,   cls:'dc-print'},
+    ],
+    slots:[
+      {id:'m3s0',ans:CAND, cls:'dc-cond',  hint:'조건식 ①'},
+      {id:'m3s1',ans:C400V,cls:'dc-cond',  hint:'조건식 ②'},
+      {id:'m3s2',ans:PY,   cls:'dc-print', hint:'print문'},
+      {id:'m3s3',ans:PN,   cls:'dc-print', hint:'print문'},
+    ],
+    lines:[
+      {t:'plain'},
+      {t:'if-ab', sid_a:'m3s0', sid_b:'m3s1'},
+      {t:'in1',   sid:'m3s2'},
+      {t:'else'},
+      {t:'in1',   sid:'m3s3'},
+    ]
+  },
+];
+
+/* ════ 상태 ════ */
+const STATE = METHODS.map(()=>({}));
+let cur = -1;
+
+function totalSlots(){ return METHODS.reduce((s,m)=>s+m.slots.length,0); }
+function doneSlots(){ return METHODS.reduce((s,m,i)=>s+m.slots.filter(sl=>STATE[i][sl.id]).length,0); }
+function updScore(){ document.getElementById('scoreChip').textContent=doneSlots()+'/'+totalSlots(); }
+
+function go(idx){
+  cur=idx;
+  document.getElementById('tab-ov').classList.toggle('on',idx===-1);
+  METHODS.forEach((_,i)=>{ const b=document.getElementById('tab-'+i); if(b)b.classList.toggle('on',i===idx); });
+  document.getElementById('sc-ov').style.display   = idx===-1?'block':'none';
+  document.getElementById('sc-quiz').style.display = idx===-1?'none':'flex';
+  if(idx>=0){ buildPool(idx); buildProb(idx); updDots(); updScore(); }
+}
+
+/* ════ 카드 풀 ════ */
+function buildPool(mi){
+  const pool=document.getElementById('poolCards');
+  pool.innerHTML='';
+  const m=METHODS[mi];
+  const st=STATE[mi];
+
+  // 미완료 슬롯의 ans 별 필요 개수
+  const needed={};
+  m.slots.forEach(sl=>{ if(!st[sl.id]) needed[sl.ans]=(needed[sl.ans]||0)+1; });
+
+  // 카드 배열을 순회하며 needed 수만큼 표시
+  const shownCnt={};
+  const shownOff=new Set();
+
+  m.cards.forEach(card=>{
+    const isAns = m.slots.some(sl=>sl.ans===card.v);
+    if(isAns){
+      const need = needed[card.v]||0;
+      const shown= shownCnt[card.v]||0;
+      if(shown < need){
+        pool.appendChild(makeCard(card.v, card.cls, mi));
+        shownCnt[card.v]=(shownCnt[card.v]||0)+1;
+      }
+    } else {
+      if(!shownOff.has(card.v)){
+        pool.appendChild(makeCard(card.v, card.cls, mi));
+        shownOff.add(card.v);
+      }
+    }
+  });
+
+  if(pool.children.length===0)
+    pool.innerHTML='<span style="font-size:12px;color:#2e3350;font-style:italic">모든 카드를 사용했습니다 ✓</span>';
+}
+
+function makeCard(val, cls, mi){
+  const d=document.createElement('div');
+  d.className='dc '+cls;
+  d.textContent=val;
+  d.draggable=true;
+  d.dataset.val=val;
+
+  d.addEventListener('dragstart',function(e){
+    e.dataTransfer.setData('text/plain', val);
+    setTimeout(function(){ d.classList.add('dragging'); }, 0);
+  });
+  d.addEventListener('dragend',function(){
+    d.classList.remove('dragging');
+  });
+  d.addEventListener('touchstart', tsStart, {passive:true});
+  d.addEventListener('touchmove',  tsMove,  {passive:false});
+  d.addEventListener('touchend',   tsEnd);
+  return d;
+}
+
+/* ════ 문제 렌더 ════ */
+function buildProb(mi){
+  const wrap=document.getElementById('probWrap');
+  wrap.innerHTML='';
+  const m=METHODS[mi];
+  const st=STATE[mi];
+
+  const card=document.createElement('div');
+  card.className='prob-card'; card.id='prob-'+mi;
+
+  const numEl=document.createElement('div'); numEl.className='p-num';
+  numEl.textContent=m.name+' — '+m.desc; card.appendChild(numEl);
+
+  const ttl=document.createElement('div'); ttl.className='p-title';
+  ttl.innerHTML=m.title; card.appendChild(ttl);
+
+  const cs=document.createElement('div'); cs.className='code-struct';
+
+  m.lines.forEach(function(ln){
+    const row=document.createElement('div'); row.className='cl';
+    const t=ln.t;
+    if(t==='plain'){
+      row.innerHTML='<span class="cv">year</span><span class="ct"> = </span><span class="cv">int</span><span class="ct">(</span><span class="cv">input</span><span class="ct">("연도를 입력하세요: "))</span>';
+    }
+    else if(t==='if'){
+      row.appendChild(kw('if ')); row.appendChild(mkSlot(mi,ln.sid,st));
+      row.appendChild(tx(':')); if(ln.cm)row.appendChild(cm(ln.cm));
+    }
+    else if(t==='elif'){
+      row.appendChild(kw('elif ')); row.appendChild(mkSlot(mi,ln.sid,st));
+      row.appendChild(tx(':')); if(ln.cm)row.appendChild(cm(ln.cm));
+    }
+    else if(t==='else'){ row.innerHTML='<span class="ck">else</span><span class="ct">:</span>'; }
+    else if(t==='in1if'){
+      row.appendChild(ind(1)); row.appendChild(kw('if ')); row.appendChild(mkSlot(mi,ln.sid,st));
+      row.appendChild(tx(':')); if(ln.cm)row.appendChild(cm(ln.cm));
+    }
+    else if(t==='in1else'){ row.innerHTML='<span class="i1"></span><span class="ck">else</span><span class="ct">:</span>'; }
+    else if(t==='in2if'){
+      row.appendChild(ind(2)); row.appendChild(kw('if ')); row.appendChild(mkSlot(mi,ln.sid,st));
+      row.appendChild(tx(':')); if(ln.cm)row.appendChild(cm(ln.cm));
+    }
+    else if(t==='in2else'){ row.innerHTML='<span class="i2"></span><span class="ck">else</span><span class="ct">:</span>'; }
+    else if(t==='in1'){ row.appendChild(ind(1)); row.appendChild(mkSlot(mi,ln.sid,st)); if(ln.cm)row.appendChild(cm(ln.cm)); }
+    else if(t==='in2'){ row.appendChild(ind(2)); row.appendChild(mkSlot(mi,ln.sid,st)); if(ln.cm)row.appendChild(cm(ln.cm)); }
+    else if(t==='in3'){ row.appendChild(ind(3)); row.appendChild(mkSlot(mi,ln.sid,st)); if(ln.cm)row.appendChild(cm(ln.cm)); }
+    else if(t==='if-ab'){
+      row.appendChild(kw('if ')); row.appendChild(tx('('));
+      row.appendChild(mkSlot(mi,ln.sid_a,st));
+      row.appendChild(tx(') ')); row.appendChild(kw('or')); row.appendChild(tx(' ('));
+      row.appendChild(mkSlot(mi,ln.sid_b,st));
+      row.appendChild(tx('):'));
+    }
+    cs.appendChild(row);
+  });
+  card.appendChild(cs);
+
+  if(m.slots.every(sl=>st[sl.id])) card.classList.add('done');
+  wrap.appendChild(card);
+}
+
+function kw(t){ const s=document.createElement('span'); s.className='ck'; s.textContent=t; return s; }
+function tx(t){ const s=document.createElement('span'); s.className='ct'; s.textContent=t; return s; }
+function cm(t){ const s=document.createElement('span'); s.className='cc'; s.textContent=' '+t; return s; }
+function ind(n){ const s=document.createElement('span'); s.className='i'+n; return s; }
+
+/* ════ 슬롯 생성 ════ */
+function mkSlot(mi, sid, st){
+  const slot=document.createElement('div');
+  slot.className='slot'; slot.id='slot-'+sid;
+  const slInfo=METHODS[mi].slots.find(function(s){ return s.id===sid; });
+
+  if(st[sid]){
+    slot.classList.add('ok');
+    slot.textContent='✓ '+slInfo.ans;
+  } else {
+    const hc=slInfo.cls==='dc-cond'?'sh-c':'sh-p';
+    slot.innerHTML='<span class="'+hc+'">'+slInfo.hint+'</span>';
+    attachDrop(slot, mi, sid);
+  }
+  return slot;
+}
+
+function attachDrop(slot, mi, sid){
+  slot.addEventListener('dragover', function(e){
+    e.preventDefault();
+    slot.classList.add('over');
+  });
+  slot.addEventListener('dragleave', function(e){
+    if(!slot.contains(e.relatedTarget)) slot.classList.remove('over');
+  });
+  slot.addEventListener('drop', function(e){
+    e.preventDefault();
+    slot.classList.remove('over');
+    var val = e.dataTransfer.getData('text/plain');
+    if(val) doPlace(mi, sid, val);
+  });
+}
+
+/* ════ 배치 처리 ════ */
+function doPlace(mi, sid, val){
+  const slInfo=METHODS[mi].slots.find(function(s){ return s.id===sid; });
+  if(!slInfo) return;
+  const slot=document.getElementById('slot-'+sid);
+  if(!slot || slot.classList.contains('ok')) return;
+
+  if(val===slInfo.ans){
+    STATE[mi][sid]=true;
+    slot.className='slot ok';
+    slot.innerHTML='✓ '+val;
+    buildPool(mi);
+    updScore();
+    updDots();
+    // 문제 카드 완료 체크
+    if(METHODS[mi].slots.every(function(s){ return STATE[mi][s.id]; })){
+      var pc=document.getElementById('prob-'+mi);
+      if(pc) pc.classList.add('done');
+      showDone(mi);
+    }
+  } else {
+    const hc=slInfo.cls==='dc-cond'?'sh-c':'sh-p';
+    slot.className='slot ng';
+    slot.textContent='✗ '+val;
+    setTimeout(function(){
+      slot.className='slot';
+      slot.innerHTML='<span class="'+hc+'">'+slInfo.hint+'</span>';
+      attachDrop(slot, mi, sid);
+    }, 700);
+  }
+}
+
+/* ════ 완료 ════ */
+function showDone(mi){
+  updDots();
+  var allAll=METHODS.every(function(_,i){ return METHODS[i].slots.every(function(s){ return STATE[i][s.id]; }); });
+  var nb=document.getElementById('mNext');
+  if(allAll){
+    document.getElementById('mEmoji').textContent='🏆';
+    document.getElementById('mTitle').textContent='전체 완료!';
+    document.getElementById('mDesc').textContent='윤년 판별 4가지 방법을 모두 완성했습니다!';
+    nb.style.display='none';
+  } else {
+    document.getElementById('mEmoji').textContent='🎉';
+    document.getElementById('mTitle').textContent=METHODS[mi].name+' 완료!';
+    document.getElementById('mDesc').textContent='다음 방법으로 넘어가 볼까요?';
+    nb.style.display='';
+  }
+  document.getElementById('modalBg').classList.add('show');
+}
+function closeModal(){ document.getElementById('modalBg').classList.remove('show'); }
+function nextM(){ closeModal(); go((cur+1)%METHODS.length); }
+
+function updDots(){
+  METHODS.forEach(function(m,i){
+    var done=m.slots.every(function(s){ return STATE[i][s.id]; });
+    var btn=document.getElementById('tab-'+i);
+    var dot=document.getElementById('td-'+i);
+    if(!btn||!dot) return;
+    btn.classList.toggle('done',done);
+    dot.textContent=done?'✓':'✎';
+  });
+}
+
+function showAns(){
+  if(cur<0)return;
+  METHODS[cur].slots.forEach(function(s){ STATE[cur][s.id]=true; });
+  buildPool(cur); buildProb(cur); updDots(); updScore();
+}
+function resetCur(){
+  if(cur<0)return;
+  STATE[cur]={};
+  buildPool(cur); buildProb(cur); updDots(); updScore();
+}
+
+/* ════ 터치 드래그 ════ */
+var tEl=null, tClone=null, tOX=0, tOY=0, tVal='';
+function tsStart(e){
+  var c=e.currentTarget; tEl=c; tVal=c.dataset.val;
+  var r=c.getBoundingClientRect();
+  tOX=e.touches[0].clientX-r.left; tOY=e.touches[0].clientY-r.top;
+  tClone=c.cloneNode(true);
+  tClone.style.cssText='position:fixed;z-index:9999;pointer-events:none;opacity:.85;width:'+r.width+'px;left:'+r.left+'px;top:'+r.top+'px;margin:0';
+  document.body.appendChild(tClone); c.style.opacity='.3';
+}
+function tsMove(e){
+  if(!tClone)return; e.preventDefault();
+  var t=e.touches[0];
+  tClone.style.left=(t.clientX-tOX)+'px'; tClone.style.top=(t.clientY-tOY)+'px';
+}
+function tsEnd(e){
+  if(!tClone||!tEl){tEl=null;return;}
+  tClone.remove(); tClone=null; tEl.style.opacity='';
+  var t=e.changedTouches[0];
+  var el=document.elementFromPoint(t.clientX,t.clientY);
+  var slot=el&&el.closest('.slot');
+  if(slot&&!slot.classList.contains('ok')){
+    var sid=slot.id.replace('slot-','');
+    var mi=METHODS.findIndex(function(m){ return m.slots.some(function(s){ return s.id===sid; }); });
+    if(mi>=0) doPlace(mi,sid,tVal);
+  }
+  tEl=null;
+}
+
+/* ════ 초기 실행 ════ */
+document.getElementById('scoreChip').textContent='0/'+totalSlots();
+go(-1);
+</script>
+</body>
+</html>
