@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>포켓몬 파이썬 — 실습 홈</title>
+<title>파이썬 기초 학습 — 정보 수업용 인터랙티브 플랫폼</title>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -91,17 +91,17 @@ body{background:#0f1117;color:#e8eaf6;font-family:'Nanum Gothic',sans-serif;min-
 <body>
 
 <nav class="nav">
-  <a class="nav-logo" href="index.html">⚡ 포켓몬 파이썬</a>
+  <a class="nav-logo" href="index.html">🐍 Python 기초 학습</a>
   <div class="nav-div"></div>
-  <span class="nav-sub">Python 기초 학습 플랫폼</span>
+  <span class="nav-sub">일반고 정보 수업용 인터랙티브 학습 플랫폼</span>
 </nav>
 
 <div class="hero">
-  <div class="hero-eyebrow">🎮 인터랙티브 파이썬 학습</div>
-  <h1>포켓몬 트레이너처럼<br><span class="hl">파이썬</span>을 마스터하자!</h1>
-  <p>강의 · 순서도 시뮬레이터 · 드래그 학습지 · 퀴즈까지<br>보고 만지고 풀어보면서 파이썬 기초를 완성하세요.</p>
+  <div class="hero-eyebrow">💻 인터랙티브 파이썬 학습</div>
+  <h1>보고 · 만지고 · 실행하며<br><span class="hl">파이썬</span>을 완성하자!</h1>
+  <p>강의로 개념을 익히고, 시뮬레이터로 시각화하고, 학습지와 퀴즈로 확인합니다.<br>일반고 정보 수업에 최적화된 파이썬 기초 학습 플랫폼입니다.</p>
   <div class="hero-pills">
-    <span class="pill">📗 강의 6챕터</span>
+    <span class="pill">📗 강의 19챕터</span>
     <span class="pill">🎬 시뮬레이터 4종</span>
     <span class="pill">🧩 드래그 학습지 3종</span>
     <span class="pill">📝 퀴즈 2종</span>
@@ -118,46 +118,137 @@ body{background:#0f1117;color:#e8eaf6;font-family:'Nanum Gothic',sans-serif;min-
   <!-- 강의 -->
   <div class="cat-label">📗 강의</div>
   <div class="card-grid">
-    <a class="tool-card tc-blue" href="lecture/template.html?ch=1">
+    <a class="tool-card tc-blue" href="lecture/template.html?ch=0">
       <div class="card-top"><div class="card-icon">⚡</div></div>
-      <span class="card-badge cb-blue">Ch.1</span>
+      <span class="card-badge cb-blue">Ch.00</span>
       <div class="card-title">파이썬 소개</div>
-      <div class="card-desc">파이썬이란 무엇인지, print()로 출력하는 법, 숫자·문자 기본 실습을 다룹니다.</div>
+      <div class="card-desc">파이썬이란 무엇인지, print()로 출력하는 법과 기본 실습을 다룹니다.</div>
+      <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
+    </a>
+    <a class="tool-card tc-blue" href="lecture/template.html?ch=1">
+      <div class="card-top"><div class="card-icon">🗂️</div></div>
+      <span class="card-badge cb-blue">Ch.01</span>
+      <div class="card-title">자료형</div>
+      <div class="card-desc">int, float, str, bool 등 파이썬의 기본 자료형을 배웁니다.</div>
       <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
     </a>
     <a class="tool-card tc-blue" href="lecture/template.html?ch=2">
       <div class="card-top"><div class="card-icon">📦</div></div>
-      <span class="card-badge cb-blue">Ch.2</span>
-      <div class="card-title">변수와 자료형</div>
-      <div class="card-desc">변수에 값을 저장하는 방법과 int, float, str, bool 자료형을 배웁니다.</div>
+      <span class="card-badge cb-blue">Ch.02</span>
+      <div class="card-title">변수와 연산자</div>
+      <div class="card-desc">변수에 값을 저장하고 산술·복합 대입 연산자를 익힙니다.</div>
       <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
     </a>
     <a class="tool-card tc-blue" href="lecture/template.html?ch=3">
-      <div class="card-top"><div class="card-icon">🔢</div></div>
-      <span class="card-badge cb-blue">Ch.3</span>
-      <div class="card-title">연산자</div>
-      <div class="card-desc">산술·비교·논리 연산자와 연산 우선순위를 익힙니다.</div>
+      <div class="card-top"><div class="card-icon">📺</div></div>
+      <span class="card-badge cb-blue">Ch.03</span>
+      <div class="card-title">출력 함수</div>
+      <div class="card-desc">print()의 sep, end, f-string 등 다양한 출력 방식을 익힙니다.</div>
       <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
     </a>
     <a class="tool-card tc-blue" href="lecture/template.html?ch=4">
-      <div class="card-top"><div class="card-icon">🔀</div></div>
-      <span class="card-badge cb-blue">Ch.4</span>
-      <div class="card-title">조건문</div>
-      <div class="card-desc">if / elif / else 구조로 조건에 따라 다른 코드를 실행하는 법을 배웁니다.</div>
+      <div class="card-top"><div class="card-icon">⌨️</div></div>
+      <span class="card-badge cb-blue">Ch.04</span>
+      <div class="card-title">입력 함수</div>
+      <div class="card-desc">input()으로 사용자 입력을 받고 자료형 변환을 다룹니다.</div>
       <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
     </a>
     <a class="tool-card tc-blue" href="lecture/template.html?ch=5">
-      <div class="card-top"><div class="card-icon">🔁</div></div>
-      <span class="card-badge cb-blue">Ch.5</span>
-      <div class="card-title">반복문</div>
-      <div class="card-desc">for / while 반복문과 range()를 사용해 반복 작업을 처리합니다.</div>
+      <div class="card-top"><div class="card-icon">🔍</div></div>
+      <span class="card-badge cb-blue">Ch.05</span>
+      <div class="card-title">비교·논리 연산자</div>
+      <div class="card-desc">==, !=, >=, and, or, not 등 비교·논리 연산자를 익힙니다.</div>
       <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
     </a>
     <a class="tool-card tc-blue" href="lecture/template.html?ch=6">
+      <div class="card-top"><div class="card-icon">🔀</div></div>
+      <span class="card-badge cb-blue">Ch.06</span>
+      <div class="card-title">선택문</div>
+      <div class="card-desc">if / elif / else 구조로 조건에 따라 다른 코드를 실행합니다.</div>
+      <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
+    </a>
+    <a class="tool-card tc-blue" href="lecture/template.html?ch=7">
+      <div class="card-top"><div class="card-icon">🔁</div></div>
+      <span class="card-badge cb-blue">Ch.07</span>
+      <div class="card-title">반복문</div>
+      <div class="card-desc">for / while 반복문과 range(), break, continue를 익힙니다.</div>
+      <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
+    </a>
+    <a class="tool-card tc-blue" href="lecture/template.html?ch=8">
+      <div class="card-top"><div class="card-icon">🏋️</div></div>
+      <span class="card-badge cb-blue">Ch.08</span>
+      <div class="card-title">반복문 연습</div>
+      <div class="card-desc">다양한 반복문 패턴을 실습으로 익힙니다.</div>
+      <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
+    </a>
+    <a class="tool-card tc-blue" href="lecture/template.html?ch=9">
       <div class="card-top"><div class="card-icon">📋</div></div>
-      <span class="card-badge cb-blue">Ch.6</span>
-      <div class="card-title">함수와 리스트</div>
-      <div class="card-desc">함수를 정의하고 리스트를 활용해 데이터를 묶고 처리하는 방법을 배웁니다.</div>
+      <span class="card-badge cb-blue">Ch.09</span>
+      <div class="card-title">리스트</div>
+      <div class="card-desc">리스트의 개념과 기본 사용법을 배웁니다.</div>
+      <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
+    </a>
+    <a class="tool-card tc-blue" href="lecture/template.html?ch=10">
+      <div class="card-top"><div class="card-icon">✂️</div></div>
+      <span class="card-badge cb-blue">Ch.10</span>
+      <div class="card-title">인덱싱과 슬라이싱</div>
+      <div class="card-desc">리스트와 문자열의 인덱싱·슬라이싱을 배웁니다.</div>
+      <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
+    </a>
+    <a class="tool-card tc-blue" href="lecture/template.html?ch=11">
+      <div class="card-top"><div class="card-icon">🔗</div></div>
+      <span class="card-badge cb-blue">Ch.11</span>
+      <div class="card-title">조건문·반복문 활용</div>
+      <div class="card-desc">조건문과 반복문을 함께 활용하는 실습입니다.</div>
+      <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
+    </a>
+    <a class="tool-card tc-blue" href="lecture/template.html?ch=12">
+      <div class="card-top"><div class="card-icon">📌</div></div>
+      <span class="card-badge cb-blue">Ch.12</span>
+      <div class="card-title">튜플</div>
+      <div class="card-desc">변경 불가능한 시퀀스 자료형 튜플을 배웁니다.</div>
+      <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
+    </a>
+    <a class="tool-card tc-blue" href="lecture/template.html?ch=13">
+      <div class="card-top"><div class="card-icon">🛠️</div></div>
+      <span class="card-badge cb-blue">Ch.13</span>
+      <div class="card-title">함수</div>
+      <div class="card-desc">함수의 정의와 호출, 매개변수와 반환값을 배웁니다.</div>
+      <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
+    </a>
+    <a class="tool-card tc-blue" href="lecture/template.html?ch=14">
+      <div class="card-top"><div class="card-icon">📊</div></div>
+      <span class="card-badge cb-blue">Ch.14</span>
+      <div class="card-title">리스트 활용</div>
+      <div class="card-desc">리스트의 다양한 메서드와 활용법을 배웁니다.</div>
+      <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
+    </a>
+    <a class="tool-card tc-blue" href="lecture/template.html?ch=15">
+      <div class="card-top"><div class="card-icon">📖</div></div>
+      <span class="card-badge cb-blue">Ch.15</span>
+      <div class="card-title">딕셔너리</div>
+      <div class="card-desc">키-값 쌍으로 데이터를 관리하는 딕셔너리를 배웁니다.</div>
+      <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
+    </a>
+    <a class="tool-card tc-blue" href="lecture/template.html?ch=16">
+      <div class="card-top"><div class="card-icon">🔵</div></div>
+      <span class="card-badge cb-blue">Ch.16</span>
+      <div class="card-title">세트</div>
+      <div class="card-desc">중복 없는 집합 자료형 세트를 배웁니다.</div>
+      <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
+    </a>
+    <a class="tool-card tc-blue" href="lecture/template.html?ch=17">
+      <div class="card-top"><div class="card-icon">⚙️</div></div>
+      <span class="card-badge cb-blue">Ch.17</span>
+      <div class="card-title">리스트 컴프리헨션</div>
+      <div class="card-desc">리스트를 간결하게 생성하는 컴프리헨션을 배웁니다.</div>
+      <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
+    </a>
+    <a class="tool-card tc-blue" href="lecture/template.html?ch=18">
+      <div class="card-top"><div class="card-icon">🐢</div></div>
+      <span class="card-badge cb-blue">Ch.18</span>
+      <div class="card-title">터틀</div>
+      <div class="card-desc">터틀 그래픽으로 파이썬을 시각적으로 익힙니다.</div>
       <div class="card-footer"><span class="card-link">강의 보기</span><span class="card-arr">→</span></div>
     </a>
   </div>
@@ -307,7 +398,7 @@ body{background:#0f1117;color:#e8eaf6;font-family:'Nanum Gothic',sans-serif;min-
       <div class="flow-icon">📗</div>
       <div class="flow-title">강의로 개념 학습</div>
       <div class="flow-desc">강의 사이트에서 자료형, 변수, 조건문, 반복문 개념을 읽고 코드를 직접 실행해 보세요.</div>
-      <a class="flow-link" href="lecture/template.html?ch=1">Ch.1부터 시작 →</a>
+      <a class="flow-link" href="lecture/template.html?ch=0">Ch.00부터 시작 →</a>
     </div>
     <div class="flow-card">
       <div class="flow-num">2</div>
@@ -362,7 +453,7 @@ body{background:#0f1117;color:#e8eaf6;font-family:'Nanum Gothic',sans-serif;min-
 </div>
 
 <div class="footer">
-  ⚡ 포켓몬 파이썬 &nbsp;·&nbsp; 일반고 정보 수업용 인터랙티브 학습 플랫폼<br>
+  🐍 Python 기초 학습 &nbsp;·&nbsp; 일반고 정보 수업용 인터랙티브 학습 플랫폼<br>
   Python 실행 엔진: <a href="https://pyodide.org" target="_blank">Pyodide</a>
   &nbsp;|&nbsp; GitHub Pages로 배포
 </div>
