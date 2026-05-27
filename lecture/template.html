@@ -292,27 +292,30 @@ async function loadChapter(n){
     const res = await fetch(ch.file);
     const text = await res.text();
 
-    // 1단계: innerHTML로 삽입 (브라우저가 HTML 파싱)
-    body.innerHTML = text;
+    // HTML 엔티티 디코드 헬퍼 (textarea 트릭 — DOM 삽입 없이 안전하게 디코딩)
+    function decodeEntities(str){
+      const ta = document.createElement('textarea');
+      ta.innerHTML = str;
+      return ta.value;
+    }
 
-    // 2단계: py-code → cb() 로 교체
-    body.querySelectorAll('pre.py-code').forEach(el => {
-      // textContent 로 가져오면 브라우저가 엔티티를 이미 복원해줌
-      const code = el.textContent;
-      const div = document.createElement('div');
-      div.innerHTML = cb(code);
-      el.replaceWith(div.firstChild);
-    });
+    // 텍스트에서 py-code / py-editor 를 cb()/eb()로 치환
+    // split 방식으로 처리해서 중첩 태그 문제 없음
+    let result = text;
 
-    // 3단계: py-editor → eb() 로 교체
-    body.querySelectorAll('div.py-editor').forEach(el => {
-      const id  = el.dataset.id;
-      const code = el.textContent;
-      const div = document.createElement('div');
-      div.innerHTML = eb(Number(id), code.trim());
-      el.replaceWith(div.firstChild);
-    });
+    // py-code 치환
+    result = result.replace(
+      /<pre class="py-code">([\s\S]*?)<\/pre>/g,
+      (_, inner) => cb(decodeEntities(inner))
+    );
 
+    // py-editor 치환
+    result = result.replace(
+      /<div class="py-editor" data-id="(\d+)">([\s\S]*?)<\/div>/g,
+      (_, id, inner) => eb(Number(id), decodeEntities(inner).trim())
+    );
+
+    body.innerHTML = result;
     if(pyodide) body.querySelectorAll('.run-btn').forEach(b=>b.disabled=false);
   } catch(e){
     body.innerHTML = `<div class="loading">불러오기 실패: ${e.message}</div>`;
