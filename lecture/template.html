@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>포켓몬 파이썬 강의</title>
+<title>파이썬 기초 강의</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Source+Code+Pro:wght@400;600&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
@@ -148,7 +148,7 @@ pre, code, .ed-ta, .code-block, .code-block *, table, table * {
 
 <!-- 탑바 -->
 <div class="topbar">
-  <a href="../index.html" class="logo">⚡ 포켓몬 파이썬</a>
+  <a href="../index.html" class="logo">🐍 Python 기초 학습</a>
   <span class="logo-sub" id="topSub">· Ch.? / 6</span>
   <div class="py-badge" id="pyBadge">Python 로딩 중...</div>
 </div>
@@ -291,7 +291,7 @@ async function loadChapter(n){
   history.pushState({ch:n}, '', `?ch=${n}`);
 
   // 헤더 업데이트
-  document.title = `Ch.${n} ${ch.title} — 포켓몬 파이썬`;
+  document.title = `Ch.${String(n).padStart(2,'0')} ${ch.title} — Python 기초 학습`;
   document.getElementById('topSub').textContent = `· Ch.${String(n).padStart(2,'0')} / 18`;
   document.getElementById('chBadge').textContent = `Chapter ${String(n).padStart(2,'0')} — ${ch.title}`;
   document.getElementById('progFill').style.width = ch.pct + '%';
