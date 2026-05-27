@@ -285,18 +285,35 @@ async function loadChapter(n){
   try{
     const res = await fetch(ch.file);
     const text = await res.text();
-    body.innerHTML = text;
-    // data-cb: base64 인코딩된 코드를 cb()로 렌더링
-    body.querySelectorAll('pre[data-cb]').forEach(el => {
-      const code = atob(el.dataset.cb);
-      el.outerHTML = cb(code);
+
+    // UTF-8 안전 base64 디코딩
+    function b64decode(str){
+      const bin = atob(str);
+      const bytes = new Uint8Array(bin.length);
+      for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+      return new TextDecoder('utf-8').decode(bytes);
+    }
+
+    // HTML 파싱 전에 data-cb/data-eb 를 직접 처리
+    // innerHTML 대신 DOMParser 사용 (속성값 보존)
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/html');
+
+    doc.querySelectorAll('pre[data-cb]').forEach(el => {
+      const code = b64decode(el.getAttribute('data-cb'));
+      const tmp = document.createElement('div');
+      tmp.innerHTML = cb(code);
+      el.replaceWith(tmp.firstChild);
     });
-    // data-eb: base64 인코딩된 코드를 eb()로 렌더링
-    body.querySelectorAll('div[data-eb]').forEach(el => {
-      const id = el.dataset.eb;
-      const code = el.dataset.code ? atob(el.dataset.code) : '';
-      el.outerHTML = eb(Number(id), code);
+    doc.querySelectorAll('div[data-eb]').forEach(el => {
+      const id = el.getAttribute('data-eb');
+      const code = el.getAttribute('data-code') ? b64decode(el.getAttribute('data-code')) : '';
+      const tmp = document.createElement('div');
+      tmp.innerHTML = eb(Number(id), code);
+      el.replaceWith(tmp.firstChild);
     });
+
+    body.innerHTML = doc.body.innerHTML;
     if(pyodide) body.querySelectorAll('.run-btn').forEach(b=>b.disabled=false);
   } catch(e){
     body.innerHTML = `<div class="loading">불러오기 실패: ${e.message}</div>`;
