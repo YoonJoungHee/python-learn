@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>변수 이름 규칙 퀴즈</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#0f1117;color:#e8eaf6;
+  font-family:'Nanum Gothic',sans-serif;
+  min-height:100vh;padding:1.5rem 1.25rem;
+  font-size:18px; /* 기본 글씨 크게 */
+}
+a.nav-back{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:8px;
+  background:#1a1d27;border:1px solid #2e3350;
+  color:#8892b0;font-size:14px;font-weight:700;
+  text-decoration:none;margin-bottom:1.5rem;transition:all .15s;
+}
+a.nav-back:hover{color:#e8eaf6;border-color:#4a5272}
+
+/* ── 화면 전환 ── */
+.screen{display:none}.screen.active{display:block}
+
+/* ══ 인트로 화면 ══ */
+.intro-hero{
+  text-align:center;padding:2.5rem 1rem 2rem;
+  background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(79,142,247,.12),transparent);
+  border-radius:18px;margin-bottom:1.75rem;
+}
+.intro-hero h1{font-size:2.2rem;font-weight:800;line-height:1.3;margin-bottom:.75rem}
+.intro-hero h1 span{color:#4f8ef7}
+.intro-hero p{font-size:1rem;color:#8892b0;line-height:1.8;max-width:520px;margin:0 auto 1.5rem}
+
+/* 규칙 카드 */
+.rules-title{font-size:1rem;font-weight:700;color:#4a5272;letter-spacing:.04em;margin-bottom:.875rem}
+.rules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:1.75rem}
+.rule-card{
+  background:#1a1d27;border:1px solid #2e3350;border-radius:12px;
+  padding:1.1rem 1.25rem;
+}
+.rule-icon{font-size:1.6rem;margin-bottom:.5rem}
+.rule-head{font-size:1rem;font-weight:800;margin-bottom:.4rem}
+.rule-body{font-size:.9rem;color:#8892b0;line-height:1.7}
+.rule-body code{
+  font-family:'JetBrains Mono',monospace;font-size:.85rem;
+  background:#22263a;padding:1px 7px;border-radius:5px;
+}
+.rule-card.ok  {border-left:3px solid #34d399}
+.rule-card.ng  {border-left:3px solid #f87171}
+.rule-card.info{border-left:3px solid #4f8ef7}
+
+.start-btn{
+  display:block;width:100%;padding:16px;border-radius:14px;
+  background:#4f8ef7;border:none;color:#fff;
+  font-size:1.1rem;font-weight:800;cursor:pointer;
+  font-family:'Nanum Gothic',sans-serif;transition:background .15s;
+}
+.start-btn:hover{background:#3a7de8}
+
+/* ══ 퀴즈 화면 ══ */
+.quiz-top{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.25rem;flex-wrap:wrap;gap:10px;
+}
+.q-num{font-size:1rem;font-weight:700;color:#8892b0}
+.q-score{font-size:1rem;color:#8892b0;font-weight:700}
+.q-score span{color:#4f8ef7;font-weight:800}
+
+/* 진행바 */
+.prog-bar{height:7px;background:#22263a;border-radius:4px;overflow:hidden;margin-bottom:1.75rem}
+.prog-fill{height:100%;background:linear-gradient(90deg,#4f8ef7,#a78bfa);border-radius:4px;transition:width .4s}
+
+/* 유형 배지 */
+.q-badges{margin-bottom:1rem;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.badge{
+  display:inline-block;font-size:.8rem;font-weight:700;
+  padding:3px 12px;border-radius:20px;
+}
+.badge-ox  {background:rgba(79,142,247,.15);color:#4f8ef7}
+.badge-mc  {background:rgba(167,139,250,.15);color:#a78bfa}
+.badge-easy{background:rgba(52,211,153,.15);color:#34d399}
+.badge-mid {background:rgba(251,191,36,.12);color:#fbbf24}
+.badge-hard{background:rgba(248,113,113,.12);color:#f87171}
+
+/* 문제 박스 */
+.q-box{
+  background:#1a1d27;border:1px solid #2e3350;border-radius:16px;
+  padding:1.75rem;margin-bottom:1.25rem;
+}
+.q-text{
+  font-size:1.15rem;font-weight:700;line-height:1.8;
+  color:#e8eaf6;margin-bottom:1.25rem;
+}
+.q-varname{
+  display:block;text-align:center;
+  font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:600;
+  color:#fbbf24;
+  background:#1a1400;border:2px solid #3a2800;border-radius:12px;
+  padding:.875rem 1.5rem;margin-bottom:1.5rem;letter-spacing:.08em;
+}
+
+/* O/X 버튼 */
+.ox-row{display:flex;gap:16px;justify-content:center}
+.ox-btn{
+  flex:1;max-width:200px;padding:1.5rem 1rem;border-radius:16px;
+  border:2px solid #2e3350;background:#13161f;
+  font-size:2.8rem;cursor:pointer;transition:all .18s;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-family:'Nanum Gothic',sans-serif;
+}
+.ox-btn:hover{transform:scale(1.04)}
+.ox-o:hover{border-color:#34d399;background:#0a1f14}
+.ox-x:hover{border-color:#f87171;background:#2a0a0a}
+.ox-label{font-size:1rem;font-weight:800;color:#8892b0}
+.ox-sub  {font-size:.8rem;color:#4a5272}
+.ox-btn.correct    {border-color:#34d399;background:#0a1f14}
+.ox-btn.wrong      {border-color:#f87171;background:#2a0a0a}
+.ox-btn.reveal-ok  {border-color:#34d399;background:#0a1f14}
+.ox-btn.disabled   {cursor:default;pointer-events:none}
+
+/* 객관식 선택지 */
+.choices{display:flex;flex-direction:column;gap:12px}
+.choice{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 18px;border-radius:12px;
+  border:1.5px solid #2e3350;background:#13161f;
+  cursor:pointer;transition:all .15s;font-size:1rem;font-weight:700;
+}
+.choice:hover{border-color:#4f8ef7;background:#111d33}
+.choice-num{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  background:#22263a;color:#8892b0;font-size:.9rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.choice:hover .choice-num{background:#4f8ef7;color:#fff}
+.choice.correct{border-color:#34d399;background:#0a1f14;color:#34d399}
+.choice.correct .choice-num{background:#34d399;color:#0a1f14}
+.choice.wrong  {border-color:#f87171;background:#2a0a0a;color:#f87171}
+.choice.wrong   .choice-num{background:#f87171;color:#fff}
+.choice.reveal-ok{border-color:#34d399;background:#0a1f14;color:#34d399}
+.choice.reveal-ok .choice-num{background:#34d399;color:#0a1f14}
+.choice.disabled{cursor:default;pointer-events:none}
+.choice code{
+  font-family:'JetBrains Mono',monospace;font-size:.9rem;
+  background:#22263a;padding:1px 7px;border-radius:5px;
+}
+
+/* 해설 박스 */
+.explain-box{
+  display:none;padding:1.25rem 1.5rem;border-radius:12px;
+  margin-bottom:1.25rem;line-height:1.8;
+}
+.explain-box.show{display:block}
+.explain-box.ok{background:#0a1f14;border:1.5px solid #34d399}
+.explain-box.ng{background:#2a0a0a;border:1.5px solid #f87171}
+.explain-result{font-size:1.1rem;font-weight:800;margin-bottom:.5rem}
+.explain-box.ok .explain-result{color:#34d399}
+.explain-box.ng .explain-result{color:#f87171}
+.explain-body{font-size:.95rem;color:#8892b0}
+.explain-body code{
+  font-family:'JetBrains Mono',monospace;font-size:.88rem;
+  background:#22263a;padding:1px 7px;border-radius:5px;color:#89dceb;
+}
+.explain-body .hi-g{color:#34d399}
+.explain-body .hi-r{color:#f87171}
+.explain-body .hi-b{color:#60a5fa}
+.explain-body .hi-y{color:#fbbf24}
+
+/* 다음 버튼 */
+.next-btn{
+  display:none;width:100%;padding:14px;border-radius:12px;
+  background:#4f8ef7;border:none;color:#fff;
+  font-size:1.05rem;font-weight:800;cursor:pointer;
+  font-family:'Nanum Gothic',sans-serif;transition:background .15s;
+}
+.next-btn.show{display:block}
+.next-btn:hover{background:#3a7de8}
+
+/* ══ 결과 화면 ══ */
+.result-wrap{
+  background:#1a1d27;border:1px solid #2e3350;border-radius:18px;
+  padding:2rem 1.5rem;text-align:center;margin-bottom:1.5rem;
+}
+.result-emoji{font-size:4rem;margin-bottom:.875rem}
+.result-title{font-size:1.5rem;font-weight:800;margin-bottom:.5rem}
+.result-score{font-size:3.5rem;font-weight:800;color:#4f8ef7;margin-bottom:.25rem}
+.result-sub  {font-size:1rem;color:#8892b0;margin-bottom:1.5rem}
+.result-bar-bg{background:#22263a;border-radius:6px;height:12px;overflow:hidden;margin-bottom:1.5rem}
+.result-bar   {height:100%;border-radius:6px;transition:width 1s ease;background:linear-gradient(90deg,#4f8ef7,#a78bfa)}
+
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:1.5rem}
+.stat{background:#22263a;border-radius:12px;padding:1rem}
+.stat-n{font-size:2rem;font-weight:800}
+.stat-l{font-size:.85rem;color:#8892b0;margin-top:4px}
+.stat-ok .stat-n{color:#34d399}
+.stat-ng .stat-n{color:#f87171}
+.stat-tt .stat-n{color:#4f8ef7}
+
+/* 정리 카드 */
+.summary{
+  background:#1a1d27;border:1px solid #2e3350;border-radius:14px;
+  padding:1.5rem;margin-bottom:1.25rem;text-align:left;
+}
+.summary-title{font-size:1rem;font-weight:800;margin-bottom:1rem;color:#e8eaf6}
+.summary-row{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:.75rem 0;border-bottom:1px solid #22263a;font-size:.95rem;
+}
+.summary-row:last-child{border-bottom:none}
+.sum-icon{font-size:1.1rem;min-width:22px;text-align:center;padding-top:2px}
+.sum-text{color:#8892b0;line-height:1.7}
+.sum-text code{
+  font-family:'JetBrains Mono',monospace;font-size:.88rem;
+  background:#22263a;padding:1px 7px;border-radius:5px;color:#89dceb;
+}
+.sum-text .ok{color:#34d399;font-weight:700}
+.sum-text .ng{color:#f87171;font-weight:700}
+
+.result-btns{display:flex;gap:12px;flex-wrap:wrap}
+.rb{
+  flex:1;padding:13px;border-radius:12px;font-size:1rem;font-weight:800;
+  cursor:pointer;font-family:'Nanum Gothic',sans-serif;transition:all .15s;
+}
+.rb-p{background:#4f8ef7;border:none;color:#fff}
+.rb-p:hover{background:#3a7de8}
+.rb-s{background:#1a1d27;border:1.5px solid #2e3350;color:#8892b0}
+.rb-s:hover{border-color:#4f8ef7;color:#4f8ef7}
+
+/* ── 선택지 인라인 해설 ── */
+.choice-inline-exp{
+  padding:1rem 1.25rem;border-radius:10px;
+  margin-top:6px;margin-bottom:4px;
+  font-size:.95rem;line-height:1.8;
+  animation:fadeIn .3s ease;
+}
+.exp-ok{background:#0a1f14;border:1.5px solid #34d399;color:#8892b0}
+.exp-ng{background:#2a0a0a;border:1.5px solid #f87171;color:#8892b0}
+.choice-inline-exp code{
+  font-family:'JetBrains Mono',monospace;font-size:.88rem;
+  background:#22263a;padding:1px 7px;border-radius:5px;color:#89dceb;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.chosen-tag{
+  display:inline-block;font-size:.8rem;font-weight:800;
+  padding:1px 8px;border-radius:6px;margin-bottom:4px;
+  background:rgba(79,142,247,.2);color:#4f8ef7;
+}
+.exp-ok .chosen-tag{background:rgba(52,211,153,.2);color:#34d399}
+.exp-ng .chosen-tag{background:rgba(248,113,113,.2);color:#f87171}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:#2e3350;border-radius:3px}
+</style>
+</head>
+<body>
+
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+  <a class="nav-back" href="../index.html" style="margin:0">← 홈으로</a>
+  <a href="../lecture/template.html?ch=2" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);color:#a78bfa;font-size:12px;font-weight:700;font-family:'Nanum Gothic',sans-serif;text-decoration:none;transition:all .15s" onmouseover="this.style.background='rgba(167,139,250,.2)'" onmouseout="this.style.background='rgba(167,139,250,.1)'">📦 Ch.02 변수와 연산자 강의 →</a>
+</div>
+
+<!-- ══════════ 인트로 화면 ══════════ -->
+<div class="screen active" id="s-intro">
+  <div class="intro-hero">
+    <h1>변수 이름 <span>규칙</span> 퀴즈</h1>
+    <p>파이썬에서 변수 이름을 만들 때 지켜야 할 규칙을 확인하는 문제입니다.<br>
+       OX 문제 4개 + 최종 정리 문제 1개, 총 5문제입니다.</p>
+  </div>
+
+  <div class="rules-title">📋 변수 이름 규칙 미리 보기</div>
+  <div class="rules-grid">
+    <div class="rule-card ok">
+      <div class="rule-icon">✅</div>
+      <div class="rule-head">영문자·숫자·밑줄(_) 사용 가능</div>
+      <div class="rule-body">
+        <code>name</code>, <code>age_1</code>, <code>my_score</code> 모두 가능합니다.
+      </div>
+    </div>
+    <div class="rule-card ng">
+      <div class="rule-icon">❌</div>
+      <div class="rule-head">숫자로 시작 불가</div>
+      <div class="rule-body">
+        <code>1name</code>, <code>3score</code> 처럼 숫자가 맨 앞에 오면 안 됩니다.
+      </div>
+    </div>
+    <div class="rule-card ng">
+      <div class="rule-icon">❌</div>
+      <div class="rule-head">특수문자 사용 불가 (밑줄 제외)</div>
+      <div class="rule-body">
+        <code>my-name</code>, <code>my name</code>, <code>score!</code> 처럼<br>
+        공백·하이픈·느낌표 등은 사용할 수 없습니다.
+      </div>
+    </div>
+    <div class="rule-card ng">
+      <div class="rule-icon">🚫</div>
+      <div class="rule-head">예약어 사용 불가</div>
+      <div class="rule-body">
+        <code>if</code>, <code>for</code>, <code>while</code>, <code>print</code> 같은<br>
+        파이썬 예약어는 변수명으로 쓸 수 없습니다.
+      </div>
+    </div>
+    <div class="rule-card info">
+      <div class="rule-icon">💡</div>
+      <div class="rule-head">대소문자 구분</div>
+      <div class="rule-body">
+        <code>score</code> 와 <code>Score</code> 는 서로 다른 변수입니다.
+      </div>
+    </div>
+    <div class="rule-card info">
+      <div class="rule-icon">💡</div>
+      <div class="rule-head">한글도 사용 가능 (권장하지 않음)</div>
+      <div class="rule-body">
+        <code>점수</code> 처럼 한글도 기술적으로 사용 가능하지만<br>
+        실무에서는 영문자를 권장합니다.
+      </div>
+    </div>
+  </div>
+
+  <button class="start-btn" onclick="startQuiz()">퀴즈 시작하기 →</button>
+</div>
+
+<!-- ══════════ 퀴즈 화면 ══════════ -->
+<div class="screen" id="s-quiz">
+  <div class="quiz-top">
+    <span class="q-num" id="qNum">문제 1 / 5</span>
+    <span class="q-score">점수 <span id="qScore">0</span> / <span id="qTotal">0</span></span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+
+  <div class="q-box">
+    <div class="q-badges">
+      <span class="badge" id="typeBadge">OX</span>
+      <span class="badge" id="diffBadge">쉬움</span>
+    </div>
+    <div class="q-text" id="qText"></div>
+    <div class="q-varname" id="qVarname" style="display:none"></div>
+    <div id="answerArea"></div>
+  </div>
+
+  <div class="explain-box" id="explainBox">
+    <div class="explain-result" id="explainResult"></div>
+    <div class="explain-body"  id="explainBody"></div>
+  </div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()"></button>
+</div>
+
+<!-- ══════════ 결과 화면 ══════════ -->
+<div class="screen" id="s-result">
+  <div class="result-wrap">
+    <div class="result-emoji" id="resEmoji">🏆</div>
+    <div class="result-title" id="resTitle">훌륭해요!</div>
+    <div class="result-score" id="resScore">0점</div>
+    <div class="result-sub"   id="resSub"></div>
+    <div class="result-bar-bg"><div class="result-bar" id="resBar" style="width:0%"></div></div>
+    <div class="stats">
+      <div class="stat stat-ok"><div class="stat-n" id="stOk">0</div><div class="stat-l">✓ 정답</div></div>
+      <div class="stat stat-ng"><div class="stat-n" id="stNg">0</div><div class="stat-l">✗ 오답</div></div>
+      <div class="stat stat-tt"><div class="stat-n">5</div><div class="stat-l">전체</div></div>
+    </div>
+  </div>
+
+  <!-- 핵심 정리 -->
+  <div class="summary">
+    <div class="summary-title">📌 변수 이름 규칙 핵심 정리</div>
+    <div class="summary-row">
+      <div class="sum-icon">✅</div>
+      <div class="sum-text"><span class="ok">가능</span> — 영문자, 숫자(첫 글자 제외), 밑줄(<code>_</code>)<br>예) <code>score</code>, <code>my_name</code>, <code>value1</code></div>
+    </div>
+    <div class="summary-row">
+      <div class="sum-icon">❌</div>
+      <div class="sum-text"><span class="ng">불가</span> — 숫자로 시작 → <code>1score</code>, <code>3data</code></div>
+    </div>
+    <div class="summary-row">
+      <div class="sum-icon">❌</div>
+      <div class="sum-text"><span class="ng">불가</span> — 공백, 특수문자(밑줄 제외) → <code>my score</code>, <code>my-name</code>, <code>score!</code></div>
+    </div>
+    <div class="summary-row">
+      <div class="sum-icon">🚫</div>
+      <div class="sum-text"><span class="ng">불가</span> — 파이썬 예약어 → <code>if</code>, <code>for</code>, <code>while</code>, <code>print</code></div>
+    </div>
+    <div class="summary-row">
+      <div class="sum-icon">💡</div>
+      <div class="sum-text"><span style="color:#fbbf24;font-weight:700">주의</span> — 대소문자 구분! <code>Score</code> ≠ <code>score</code></div>
+    </div>
+  </div>
+
+  <div class="result-btns">
+    <button class="rb rb-s" onclick="goIntro()">← 규칙 다시 보기</button>
+    <button class="rb rb-p" onclick="retryQuiz()">다시 풀기 ↺</button>
+  </div>
+</div>
+
+<script>
+/* ══ 문제 데이터 ══ */
+const QUESTIONS = [
+  /* ── Q1: OX ── */
+  {
+    type:'ox', diff:'easy',
+    text:'아래 변수 이름을 파이썬에서 사용할 수 있을까요?',
+    varname:'my_score',
+    answer:true,
+    explain_ok:'✓ 정답입니다!',
+    explain_ng:'✗ 틀렸습니다.',
+    explain:`<span class="hi-g"><code>my_score</code> 는 올바른 변수 이름</span>입니다.<br>
+      영문자와 밑줄(<code>_</code>)만 사용했고, 첫 글자가 문자이므로 규칙에 맞습니다.<br>
+      ✅ 영문자, 숫자(첫 글자 제외), 밑줄은 모두 사용 가능합니다.`,
+  },
+  /* ── Q2: OX ── */
+  {
+    type:'ox', diff:'easy',
+    text:'아래 변수 이름을 파이썬에서 사용할 수 있을까요?',
+    varname:'1score',
+    answer:false,
+    explain_ok:'✓ 정답입니다!',
+    explain_ng:'✗ 틀렸습니다.',
+    explain:`<span class="hi-r"><code>1score</code> 는 사용할 수 없는 변수 이름</span>입니다.<br>
+      ❌ 변수 이름은 <span class="hi-r">숫자로 시작할 수 없습니다.</span><br>
+      올바른 예: <code>score1</code>, <code>score_1</code>`,
+  },
+  /* ── Q3: OX ── */
+  {
+    type:'ox', diff:'mid',
+    text:'아래 변수 이름을 파이썬에서 사용할 수 있을까요?',
+    varname:'my-name',
+    answer:false,
+    explain_ok:'✓ 정답입니다!',
+    explain_ng:'✗ 틀렸습니다.',
+    explain:`<span class="hi-r"><code>my-name</code> 은 사용할 수 없는 변수 이름</span>입니다.<br>
+      ❌ 하이픈(<code>-</code>)은 파이썬에서 <span class="hi-r">빼기 연산자</span>로 인식합니다.<br>
+      <code>my-name</code> → <code>my</code> 빼기 <code>name</code> 으로 해석되어 오류 발생!<br>
+      올바른 예: <code>my_name</code> (밑줄 사용)`,
+  },
+  /* ── Q4: OX ── */
+  {
+    type:'ox', diff:'mid',
+    text:'아래 변수 이름을 파이썬에서 사용할 수 있을까요?',
+    varname:'if',
+    answer:false,
+    explain_ok:'✓ 정답입니다!',
+    explain_ng:'✗ 틀렸습니다.',
+    explain:`<span class="hi-r"><code>if</code> 는 사용할 수 없는 변수 이름</span>입니다.<br>
+      🚫 <code>if</code> 는 파이썬의 <span class="hi-r">예약어(키워드)</span>입니다.<br>
+      예약어는 파이썬이 특별한 용도로 사용하는 단어이므로 변수명으로 쓸 수 없습니다.<br>
+      예약어 예시: <code>if</code>, <code>for</code>, <code>while</code>, <code>else</code>, <code>and</code>, <code>or</code>`,
+  },
+  /* ── Q5: 5지선다 ── */
+  {
+    type:'mc', diff:'hard',
+    text:'다음 중 파이썬 변수 이름으로 사용할 수 있는 것은? (1개 선택)',
+    choices:[
+      '2nd_place',
+      'student name',
+      '_total_score',
+      'for',
+      'score!',
+    ],
+    choice_explains:[
+      `<span class="hi-r">❌ 틀렸습니다.</span><br>
+       <code>2nd_place</code> 는 <span class="hi-r">숫자(2)로 시작</span>하기 때문에 변수명으로 사용할 수 없습니다.<br>
+       👉 올바른 형태: <code>second_place</code> 또는 <code>place_2nd</code>`,
+      `<span class="hi-r">❌ 틀렸습니다.</span><br>
+       <code>student name</code> 은 중간에 <span class="hi-r">공백(띄어쓰기)</span>이 있어서 사용할 수 없습니다.<br>
+       파이썬은 공백을 두 개의 단어로 인식합니다.<br>
+       👉 올바른 형태: <code>student_name</code> (공백 대신 밑줄 사용)`,
+      `<span class="hi-g">✅ 정답입니다!</span><br>
+       <code>_total_score</code> 는 <span class="hi-g">밑줄(_)로 시작</span>하고 영문자와 밑줄만 사용했으므로 사용 가능합니다.<br>
+       변수명은 영문자, 숫자(첫 글자 제외), 밑줄(_)을 사용할 수 있습니다.`,
+      `<span class="hi-r">❌ 틀렸습니다.</span><br>
+       <code>for</code> 는 파이썬의 <span class="hi-r">예약어(키워드)</span>입니다.<br>
+       예약어는 파이썬이 특별한 목적으로 미리 사용하는 단어로, 변수명으로 쓸 수 없습니다.<br>
+       예약어 예시: <code>if</code>, <code>for</code>, <code>while</code>, <code>else</code>, <code>and</code>`,
+      `<span class="hi-r">❌ 틀렸습니다.</span><br>
+       <code>score!</code> 에는 <span class="hi-r">특수문자(!)</span>가 포함되어 있어 사용할 수 없습니다.<br>
+       밑줄(_) 을 제외한 특수문자는 모두 변수명에 사용할 수 없습니다.<br>
+       👉 올바른 형태: <code>score</code> 또는 <code>my_score</code>`,
+    ],
+    answer:2,
+    explain:`정답은 <span class="hi-g">③ <code>_total_score</code></span> 입니다.`,
+  },
+];
+
+/* ══ 상태 ══ */
+let cur=0, score=0;
+
+/* ══ 화면 전환 ══ */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ══ 시작 ══ */
+function startQuiz(){
+  cur=0; score=0;
+  showScreen('s-quiz');
+  renderQ();
+}
+
+/* ══ 문제 렌더링 ══ */
+function renderQ(){
+  const q = QUESTIONS[cur];
+  const total = QUESTIONS.length;
+
+  document.getElementById('qNum').textContent = `문제 ${cur+1} / ${total}`;
+  document.getElementById('qScore').textContent = score;
+  document.getElementById('qTotal').textContent = total;
+  document.getElementById('progFill').style.width = (cur/total*100)+'%';
+
+  /* 배지 */
+  const tb = document.getElementById('typeBadge');
+  tb.textContent = q.type==='ox' ? 'O / X' : '5지 선다';
+  tb.className   = 'badge '+(q.type==='ox'?'badge-ox':'badge-mc');
+  const db = document.getElementById('diffBadge');
+  db.textContent = {easy:'⭐ 쉬움',mid:'⭐⭐ 보통',hard:'⭐⭐⭐ 어려움'}[q.diff];
+  db.className   = 'badge badge-'+q.diff;
+
+  /* 문제 텍스트 */
+  document.getElementById('qText').textContent = q.text;
+
+  /* 변수명 표시 */
+  const vn = document.getElementById('qVarname');
+  if(q.varname){ vn.textContent=q.varname; vn.style.display='block'; }
+  else vn.style.display='none';
+
+  /* 해설 초기화 */
+  const eb = document.getElementById('explainBox');
+  eb.className='explain-box';
+  document.getElementById('nextBtn').className='next-btn';
+
+  /* 답변 영역 */
+  const area = document.getElementById('answerArea');
+  area.innerHTML='';
+
+  if(q.type==='ox'){
+    area.innerHTML=`
+      <div class="ox-row">
+        <button class="ox-btn ox-o" id="btn-o" onclick="answerOX(true)">
+          <span>⭕</span>
+          <span class="ox-label">O (가능)</span>
+          <span class="ox-sub">변수명으로 쓸 수 있다</span>
+        </button>
+        <button class="ox-btn ox-x" id="btn-x" onclick="answerOX(false)">
+          <span>❌</span>
+          <span class="ox-label">X (불가)</span>
+          <span class="ox-sub">변수명으로 쓸 수 없다</span>
+        </button>
+      </div>`;
+  } else {
+    const ul = document.createElement('div');
+    ul.className='choices';
+    const nums=['①','②','③','④','⑤'];
+    q.choices.forEach((c,i)=>{
+      const btn=document.createElement('div');
+      btn.className='choice';
+      btn.id='choice-'+i;
+      // 코드처럼 보이는 변수명은 monospace로
+      const label=`<span style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;color:#fbbf24">${c}</span>`;
+      btn.innerHTML=`<div class="choice-num">${nums[i]||i+1}</div><div>${label}</div>`;
+      btn.onclick=()=>answerMC(i);
+      ul.appendChild(btn);
+    });
+    area.appendChild(ul);
+  }
+}
+
+/* ══ OX 답변 ══ */
+function answerOX(userAnswer){
+  const q=QUESTIONS[cur];
+  const correct=(userAnswer===q.answer);
+  if(correct) score++;
+
+  const btnO=document.getElementById('btn-o');
+  const btnX=document.getElementById('btn-x');
+  btnO.classList.add('disabled'); btnX.classList.add('disabled');
+
+  if(userAnswer===true){
+    btnO.classList.add(correct?'correct':'wrong');
+    if(!correct) btnX.classList.add('reveal-ok');
+  } else {
+    btnX.classList.add(correct?'correct':'wrong');
+    if(!correct) btnO.classList.add('reveal-ok');
+  }
+  showExplain(q, correct);
+}
+
+/* ══ 객관식 답변 ══ */
+function answerMC(idx){
+  const q=QUESTIONS[cur];
+  const correct=(idx===q.answer);
+  if(correct) score++;
+
+  // 모든 선택지 비활성화
+  document.querySelectorAll('.choice').forEach(el=>el.classList.add('disabled'));
+
+  // 선택한 항목 색상
+  const chosen=document.getElementById('choice-'+idx);
+  chosen.classList.add(correct?'correct':'wrong');
+
+  // 틀렸을 때 정답 항목도 표시
+  if(!correct){
+    document.getElementById('choice-'+q.answer)?.classList.add('reveal-ok');
+  }
+
+  // choice_explains가 있으면 모든 항목 아래에 해설을 순서대로 표시
+  if(q.choice_explains){
+    // 애니메이션 딜레이를 주며 모든 항목 해설 순서대로 삽입
+    q.choices.forEach((_, i)=>{
+      setTimeout(()=>{
+        const target = document.getElementById('choice-'+i);
+        if(!target) return;
+        const expDiv = document.createElement('div');
+        const isCorrect = (i === q.answer);
+        const isChosen  = (i === idx);
+        expDiv.className = 'choice-inline-exp ' + (isCorrect ? 'exp-ok' : 'exp-ng');
+        // 내가 선택한 항목이면 "내가 선택" 태그 추가
+        const chosenTag = isChosen
+          ? `<span class="chosen-tag">${isCorrect ? '✓ 내가 선택 (정답!)' : '← 내가 선택'}</span><br>`
+          : '';
+        expDiv.innerHTML = chosenTag + q.choice_explains[i];
+        target.insertAdjacentElement('afterend', expDiv);
+      }, i * 180); // 0.18초 간격으로 순서대로 나타남
+    });
+    // 마지막 항목 해설까지 나온 후 다음 버튼 표시
+    setTimeout(()=>{
+      const nb=document.getElementById('nextBtn');
+      nb.className='next-btn show';
+      nb.textContent='결과 보기 →';
+    }, q.choices.length * 180 + 200);
+    return;
+  }
+
+  showExplain(q, correct);
+}
+
+/* ══ 해설 표시 ══ */
+function showExplain(q, correct){
+  const eb=document.getElementById('explainBox');
+  eb.className='explain-box show '+(correct?'ok':'ng');
+  document.getElementById('explainResult').textContent=
+    correct ? '✓ 정답입니다!' : '✗ 틀렸습니다.';
+  document.getElementById('explainBody').innerHTML=q.explain;
+
+  const nb=document.getElementById('nextBtn');
+  nb.className='next-btn show';
+  nb.textContent=(cur<QUESTIONS.length-1)?'다음 문제 →':'결과 보기 →';
+}
+
+/* ══ 다음 문제 ══ */
+function nextQ(){
+  cur++;
+  if(cur>=QUESTIONS.length){ showResult(); return; }
+  renderQ();
+}
+
+/* ══ 결과 ══ */
+function showResult(){
+  showScreen('s-result');
+  const total=QUESTIONS.length;
+  const pct=Math.round(score/total*100);
+
+  const emoji=['😢','😅','🙂','😊','🏆'];
+  const titles=['다시 한번 도전해보세요!','조금 더 연습해봐요!','잘 하고 있어요!','거의 다 왔어요!','완벽합니다!'];
+  const ei=Math.min(Math.floor(score/(total/5)),4);
+  document.getElementById('resEmoji').textContent=emoji[ei];
+  document.getElementById('resTitle').textContent=titles[ei];
+  document.getElementById('resScore').textContent=score+' / '+total;
+  document.getElementById('resSub').textContent=`정답률 ${pct}%`;
+  document.getElementById('stOk').textContent=score;
+  document.getElementById('stNg').textContent=total-score;
+  setTimeout(()=>{document.getElementById('resBar').style.width=pct+'%';},100);
+}
+
+function goIntro(){ showScreen('s-intro'); }
+function retryQuiz(){ cur=0; score=0; showScreen('s-quiz'); renderQ(); }
+
+/* ══ 초기 ══ */
+showScreen('s-intro');
+</script>
+</body>
+</html>
