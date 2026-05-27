@@ -13,7 +13,7 @@
   --accent:#4f8ef7;--accent2:#a78bfa;--green:#34d399;--red:#f87171;--yellow:#fbbf24;
   --text:#e8eaf6;--text2:#8892b0;--text3:#4a5272;
   --mono:'JetBrains Mono',monospace;--sans:'Nanum Gothic',sans-serif;--body:'Gowun Dodum',sans-serif;
-  --radius:10px;--topbar-h:52px;--sidebar-w:196px;
+  --radius:10px;--topbar-h:52px;--sidebar-w:230px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--body);height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -47,14 +47,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);height:100vh
 .sb-home:hover{color:var(--accent)}
 .sb-label{padding:14px 16px 6px;font-size:10px;font-family:var(--sans);font-weight:700;color:var(--text3);letter-spacing:.07em}
 .sb-item{
-  display:flex;align-items:center;gap:10px;padding:10px 16px;
-  text-decoration:none;font-family:var(--sans);font-weight:700;font-size:12px;
+  display:flex;align-items:center;gap:10px;padding:9px 16px;
+  text-decoration:none;font-family:var(--sans);font-weight:700;font-size:14px;
   color:var(--text2);border-left:2px solid transparent;cursor:pointer;
   transition:background .12s,color .12s,border-color .12s;
 }
 .sb-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
 .sb-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(79,142,247,.07)}
-.sb-num{font-family:var(--mono);font-size:10px;color:var(--text3);min-width:20px}
+.sb-num{font-family:var(--mono);font-size:11px;color:var(--text3);min-width:26px}
 .sb-item.active .sb-num{color:var(--accent)}
 
 /* ══ 메인 콘텐츠 ══ */
@@ -131,12 +131,25 @@ pre{padding:.875rem 1.25rem;overflow-x:auto;font-family:var(--mono);font-size:12
   <nav class="sidebar">
     <a href="../index.html" class="sb-home">← 홈으로</a>
     <div class="sb-label">CHAPTERS</div>
-    <a class="sb-item" data-ch="1" onclick="loadChapter(1)"><span class="sb-num">Ch.1</span><span>⚡ 파이썬 소개</span></a>
-    <a class="sb-item" data-ch="2" onclick="loadChapter(2)"><span class="sb-num">Ch.2</span><span>📦 변수와 자료형</span></a>
-    <a class="sb-item" data-ch="3" onclick="loadChapter(3)"><span class="sb-num">Ch.3</span><span>🔢 연산자</span></a>
-    <a class="sb-item" data-ch="4" onclick="loadChapter(4)"><span class="sb-num">Ch.4</span><span>🔀 조건문</span></a>
-    <a class="sb-item" data-ch="5" onclick="loadChapter(5)"><span class="sb-num">Ch.5</span><span>🔁 반복문</span></a>
-    <a class="sb-item" data-ch="6" onclick="loadChapter(6)"><span class="sb-num">Ch.6</span><span>📋 함수와 리스트</span></a>
+    <a class="sb-item" data-ch="0"  onclick="loadChapter(0)"><span class="sb-num">Ch.00</span><span>⚡ 파이썬 소개</span></a>
+    <a class="sb-item" data-ch="1"  onclick="loadChapter(1)"><span class="sb-num">Ch.01</span><span>🗂️ 자료형</span></a>
+    <a class="sb-item" data-ch="2"  onclick="loadChapter(2)"><span class="sb-num">Ch.02</span><span>📦 변수와 연산자</span></a>
+    <a class="sb-item" data-ch="3"  onclick="loadChapter(3)"><span class="sb-num">Ch.03</span><span>📺 출력 함수</span></a>
+    <a class="sb-item" data-ch="4"  onclick="loadChapter(4)"><span class="sb-num">Ch.04</span><span>⌨️ 입력 함수</span></a>
+    <a class="sb-item" data-ch="5"  onclick="loadChapter(5)"><span class="sb-num">Ch.05</span><span>🔍 비교·논리 연산자</span></a>
+    <a class="sb-item" data-ch="6"  onclick="loadChapter(6)"><span class="sb-num">Ch.06</span><span>🔀 선택문</span></a>
+    <a class="sb-item" data-ch="7"  onclick="loadChapter(7)"><span class="sb-num">Ch.07</span><span>🔁 반복문</span></a>
+    <a class="sb-item" data-ch="8"  onclick="loadChapter(8)"><span class="sb-num">Ch.08</span><span>🏋️ 반복문 연습</span></a>
+    <a class="sb-item" data-ch="9"  onclick="loadChapter(9)"><span class="sb-num">Ch.09</span><span>📋 리스트</span></a>
+    <a class="sb-item" data-ch="10" onclick="loadChapter(10)"><span class="sb-num">Ch.10</span><span>✂️ 인덱싱과 슬라이싱</span></a>
+    <a class="sb-item" data-ch="11" onclick="loadChapter(11)"><span class="sb-num">Ch.11</span><span>🔗 조건문·반복문 활용</span></a>
+    <a class="sb-item" data-ch="12" onclick="loadChapter(12)"><span class="sb-num">Ch.12</span><span>📌 튜플</span></a>
+    <a class="sb-item" data-ch="13" onclick="loadChapter(13)"><span class="sb-num">Ch.13</span><span>🛠️ 함수</span></a>
+    <a class="sb-item" data-ch="14" onclick="loadChapter(14)"><span class="sb-num">Ch.14</span><span>📊 리스트 활용</span></a>
+    <a class="sb-item" data-ch="15" onclick="loadChapter(15)"><span class="sb-num">Ch.15</span><span>📖 딕셔너리</span></a>
+    <a class="sb-item" data-ch="16" onclick="loadChapter(16)"><span class="sb-num">Ch.16</span><span>🔵 세트</span></a>
+    <a class="sb-item" data-ch="17" onclick="loadChapter(17)"><span class="sb-num">Ch.17</span><span>⚙️ 리스트 컴프리헨션</span></a>
+    <a class="sb-item" data-ch="18" onclick="loadChapter(18)"><span class="sb-num">Ch.18</span><span>🐢 터틀</span></a>
   </nav>
 
   <!-- 메인 -->
@@ -157,23 +170,28 @@ pre{padding:.875rem 1.25rem;overflow-x:auto;font-family:var(--mono);font-size:12
 
 <script>
 const CHAPTERS = [
-  null, // index 0 unused
-  { title:'⚡ 파이썬 소개',    file:'content/ch01.html', pct:16  },
-  { title:'📦 변수와 자료형',  file:'content/ch02.html', pct:33  },
-  { title:'🔢 연산자',         file:'content/ch03.html', pct:50  },
-  { title:'🔀 조건문',         file:'content/ch04.html', pct:66  },
-  { title:'🔁 반복문',         file:'content/ch05.html', pct:83  },
-  { title:'📋 함수와 리스트',  file:'content/ch06.html', pct:100 },
+  { title:'⚡ 파이썬 소개',          file:'content/ch00.html', pct:5  },
+  { title:'🗂️ 자료형',               file:'content/ch01.html', pct:10 },
+  { title:'📦 변수와 연산자',        file:'content/ch02.html', pct:16 },
+  { title:'📺 출력 함수',            file:'content/ch03.html', pct:21 },
+  { title:'⌨️ 입력 함수',            file:'content/ch04.html', pct:26 },
+  { title:'🔍 비교·논리 연산자',     file:'content/ch05.html', pct:32 },
+  { title:'🔀 선택문',               file:'content/ch06.html', pct:37 },
+  { title:'🔁 반복문',               file:'content/ch07.html', pct:42 },
+  { title:'🏋️ 반복문 연습',          file:'content/ch08.html', pct:47 },
+  { title:'📋 리스트',               file:'content/ch09.html', pct:53 },
+  { title:'✂️ 인덱싱과 슬라이싱',    file:'content/ch10.html', pct:58 },
+  { title:'🔗 조건문·반복문 활용',   file:'content/ch11.html', pct:63 },
+  { title:'📌 튜플',                 file:'content/ch12.html', pct:68 },
+  { title:'🛠️ 함수',                 file:'content/ch13.html', pct:74 },
+  { title:'📊 리스트 활용',          file:'content/ch14.html', pct:79 },
+  { title:'📖 딕셔너리',             file:'content/ch15.html', pct:84 },
+  { title:'🔵 세트',                 file:'content/ch16.html', pct:89 },
+  { title:'⚙️ 리스트 컴프리헨션',    file:'content/ch17.html', pct:95 },
+  { title:'🐢 터틀',                 file:'content/ch18.html', pct:100},
 ];
 
-let currentCh = 1;
-
-/* ── URL 쿼리로 챕터 결정 ── */
-function getChFromURL(){
-  const p = new URLSearchParams(location.search);
-  const n = parseInt(p.get('ch') || '1');
-  return (n >= 1 && n <= 6) ? n : 1;
-}
+let currentCh = 0;
 
 /* ── 코드 하이라이터 ── */
 function cb(code){
@@ -243,9 +261,9 @@ async function loadChapter(n){
 
   // 헤더 업데이트
   document.title = `Ch.${n} ${ch.title} — 포켓몬 파이썬`;
-  document.getElementById('topSub').textContent = `· Ch.${n} / 6`;
-  document.getElementById('chBadge').textContent = `Chapter ${n} — ${ch.title}`;
-  document.getElementById('chTitle').textContent = `Ch.${n} — ${ch.title}`;
+  document.getElementById('topSub').textContent = `· Ch.${String(n).padStart(2,'0')} / 18`;
+  document.getElementById('chBadge').textContent = `Chapter ${String(n).padStart(2,'0')} — ${ch.title}`;
+  document.getElementById('chTitle').textContent = `Ch.${String(n).padStart(2,'0')} — ${ch.title}`;
   document.getElementById('progFill').style.width = ch.pct + '%';
 
   // 사이드바 활성화
@@ -256,8 +274,8 @@ async function loadChapter(n){
   // 이전/다음 버튼
   const prev = document.getElementById('btnPrev');
   const next = document.getElementById('btnNext');
-  if(n <= 1){ prev.classList.add('hidden'); } else { prev.classList.remove('hidden'); prev.textContent='← 이전 챕터'; }
-  if(n >= 6){ next.textContent='강의 완료 ✓'; next.onclick=null; } else { next.textContent='다음 챕터 →'; next.onclick=()=>moveCh(1); }
+  if(n <= 0){ prev.classList.add('hidden'); } else { prev.classList.remove('hidden'); prev.textContent='← 이전 챕터'; }
+  if(n >= 18){ next.textContent='강의 완료 ✓'; next.onclick=null; } else { next.textContent='다음 챕터 →'; next.onclick=()=>moveCh(1); }
 
   // 본문 로드
   const body = document.getElementById('lsBody');
@@ -279,15 +297,19 @@ async function loadChapter(n){
 
 function moveCh(dir){
   const next = currentCh + dir;
-  if(next >= 1 && next <= 6) loadChapter(next);
+  if(next >= 0 && next <= 18) loadChapter(next);
 }
-
 /* ── 브라우저 뒤로가기 지원 ── */
 window.addEventListener('popstate', e=>{
-  if(e.state?.ch) loadChapter(e.state.ch);
+  if(e.state?.ch !== undefined) loadChapter(e.state.ch);
 });
-
 /* ── 초기 실행 ── */
+function getChFromURL(){
+  const p = new URLSearchParams(location.search);
+  const n = parseInt(p.get('ch') ?? '0');
+  return (n >= 0 && n <= 18) ? n : 0;
+}
+
 initPy();
 loadChapter(getChFromURL());
 </script>
