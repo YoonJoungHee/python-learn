@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>포켓몬 파이썬 강의</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=JetBrains+Mono:wght@400;600&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Source+Code+Pro:wght@400;600&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
 <style>
 :root{
   --bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3350;
   --accent:#4f8ef7;--accent2:#a78bfa;--green:#34d399;--red:#f87171;--yellow:#fbbf24;
   --text:#e8eaf6;--text2:#8892b0;--text3:#4a5272;
-  --mono:'JetBrains Mono',monospace;--sans:'Nanum Gothic',sans-serif;--body:'Gowun Dodum',sans-serif;
+  --mono:'Source Code Pro',monospace;--sans:'Nanum Gothic',sans-serif;--body:'Gowun Dodum',sans-serif;
   --radius:10px;--topbar-h:52px;--sidebar-w:230px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -292,31 +292,27 @@ async function loadChapter(n){
     const res = await fetch(ch.file);
     const text = await res.text();
 
-    // <pre class="py-code">HTML엔티티코드</pre> → cb() 렌더링
-    // <div class="py-editor" data-id="N">HTML엔티티코드</div> → eb() 렌더링
-    // 텍스트 상태에서 정규식으로 처리 (DOM 파싱 없음)
-    const html = text
-      .replace(/<pre class="py-code">([\s\S]*?)<\/pre>/g, (_, escaped) => {
-        // HTML 엔티티 → 실제 문자로 복원 후 cb()에 전달
-        const code = escaped
-          .replace(/&amp;/g,'&')
-          .replace(/&lt;/g,'<')
-          .replace(/&gt;/g,'>')
-          .replace(/&quot;/g,'"')
-          .replace(/&#39;/g,"'");
-        return cb(code);
-      })
-      .replace(/<div class="py-editor" data-id="(\d+)">([\s\S]*?)<\/div>/g, (_, id, escaped) => {
-        const code = escaped
-          .replace(/&amp;/g,'&')
-          .replace(/&lt;/g,'<')
-          .replace(/&gt;/g,'>')
-          .replace(/&quot;/g,'"')
-          .replace(/&#39;/g,"'");
-        return eb(Number(id), code);
-      });
+    // 1단계: innerHTML로 삽입 (브라우저가 HTML 파싱)
+    body.innerHTML = text;
 
-    body.innerHTML = html;
+    // 2단계: py-code → cb() 로 교체
+    body.querySelectorAll('pre.py-code').forEach(el => {
+      // textContent 로 가져오면 브라우저가 엔티티를 이미 복원해줌
+      const code = el.textContent;
+      const div = document.createElement('div');
+      div.innerHTML = cb(code);
+      el.replaceWith(div.firstChild);
+    });
+
+    // 3단계: py-editor → eb() 로 교체
+    body.querySelectorAll('div.py-editor').forEach(el => {
+      const id  = el.dataset.id;
+      const code = el.textContent;
+      const div = document.createElement('div');
+      div.innerHTML = eb(Number(id), code.trim());
+      el.replaceWith(div.firstChild);
+    });
+
     if(pyodide) body.querySelectorAll('.run-btn').forEach(b=>b.disabled=false);
   } catch(e){
     body.innerHTML = `<div class="loading">불러오기 실패: ${e.message}</div>`;
