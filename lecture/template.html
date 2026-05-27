@@ -107,7 +107,29 @@ pre{padding:.875rem 1.25rem;overflow-x:auto;font-family:var(--mono);font-size:12
 .ls-nav a.primary:hover{background:#3a7de8;color:#fff}
 .ls-nav a.hidden{visibility:hidden}
 
-/* ══ 로딩 ══ */
+/* ══ 서브메뉴 ══ */
+.sb-sub{display:none;flex-direction:column;background:#0f1117}
+.sb-sub.open{display:flex}
+.sb-sub-item{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 16px 7px 42px;text-decoration:none;
+  font-family:var(--sans);font-weight:600;font-size:12px;
+  color:var(--text3);border-left:2px solid transparent;
+  transition:background .12s,color .12s;
+}
+.sb-sub-item:hover{background:rgba(255,255,255,.03);color:var(--text2)}
+.sb-sub-item.active{color:var(--accent2);border-left-color:var(--accent2)}
+
+/* ══ 챕터 헤더 링크 버튼 ══ */
+.ch-link-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:6px;margin-left:10px;
+  font-size:11px;font-family:var(--sans);font-weight:700;
+  background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.3);
+  color:var(--accent2);text-decoration:none;vertical-align:middle;
+  transition:background .15s;cursor:pointer;
+}
+.ch-link-btn:hover{background:rgba(167,139,250,.25)}
 .loading{padding:3rem;text-align:center;color:var(--text3);font-family:var(--sans);font-size:13px}
 
 /* 스크롤바 */
@@ -139,6 +161,9 @@ pre, code, .ed-ta, .code-block, .code-block *, table, table * {
     <div class="sb-label">CHAPTERS</div>
     <a class="sb-item" data-ch="0"  onclick="loadChapter(0)"><span class="sb-num">Ch.00</span><span>⚡ 파이썬 소개</span></a>
     <a class="sb-item" data-ch="1"  onclick="loadChapter(1)"><span class="sb-num">Ch.01</span><span>🗂️ 자료형</span></a>
+    <div class="sb-sub" id="sub-1">
+      <a class="sb-sub-item" href="../simulator/datatype-sort.html" target="_blank">📋 자료형 분류 학습지</a>
+    </div>
     <a class="sb-item" data-ch="2"  onclick="loadChapter(2)"><span class="sb-num">Ch.02</span><span>📦 변수와 연산자</span></a>
     <a class="sb-item" data-ch="3"  onclick="loadChapter(3)"><span class="sb-num">Ch.03</span><span>📺 출력 함수</span></a>
     <a class="sb-item" data-ch="4"  onclick="loadChapter(4)"><span class="sb-num">Ch.04</span><span>⌨️ 입력 함수</span></a>
@@ -176,25 +201,25 @@ pre, code, .ed-ta, .code-block, .code-block *, table, table * {
 
 <script>
 const CHAPTERS = [
-  { title:'⚡ 파이썬 소개',          file:'content/ch00.html', pct:5  },
-  { title:'🗂️ 자료형',               file:'content/ch01.html', pct:10 },
-  { title:'📦 변수와 연산자',        file:'content/ch02.html', pct:16 },
-  { title:'📺 출력 함수',            file:'content/ch03.html', pct:21 },
-  { title:'⌨️ 입력 함수',            file:'content/ch04.html', pct:26 },
-  { title:'🔍 비교·논리 연산자',     file:'content/ch05.html', pct:32 },
-  { title:'🔀 선택문',               file:'content/ch06.html', pct:37 },
-  { title:'🔁 반복문',               file:'content/ch07.html', pct:42 },
-  { title:'🏋️ 반복문 연습',          file:'content/ch08.html', pct:47 },
-  { title:'📋 리스트',               file:'content/ch09.html', pct:53 },
-  { title:'✂️ 인덱싱과 슬라이싱',    file:'content/ch10.html', pct:58 },
-  { title:'🔗 조건문·반복문 활용',   file:'content/ch11.html', pct:63 },
-  { title:'📌 튜플',                 file:'content/ch12.html', pct:68 },
-  { title:'🛠️ 함수',                 file:'content/ch13.html', pct:74 },
-  { title:'📊 리스트 활용',          file:'content/ch14.html', pct:79 },
-  { title:'📖 딕셔너리',             file:'content/ch15.html', pct:84 },
-  { title:'🔵 세트',                 file:'content/ch16.html', pct:89 },
-  { title:'⚙️ 리스트 컴프리헨션',    file:'content/ch17.html', pct:95 },
-  { title:'🐢 터틀',                 file:'content/ch18.html', pct:100},
+  { title:'⚡ 파이썬 소개',          file:'content/ch00.html', pct:5,  links:[] },
+  { title:'🗂️ 자료형',               file:'content/ch01.html', pct:10, links:[{label:'📋 자료형 분류 학습지', url:'../simulator/datatype-sort.html'}] },
+  { title:'📦 변수와 연산자',        file:'content/ch02.html', pct:16, links:[] },
+  { title:'📺 출력 함수',            file:'content/ch03.html', pct:21, links:[] },
+  { title:'⌨️ 입력 함수',            file:'content/ch04.html', pct:26, links:[] },
+  { title:'🔍 비교·논리 연산자',     file:'content/ch05.html', pct:32, links:[] },
+  { title:'🔀 선택문',               file:'content/ch06.html', pct:37, links:[] },
+  { title:'🔁 반복문',               file:'content/ch07.html', pct:42, links:[] },
+  { title:'🏋️ 반복문 연습',          file:'content/ch08.html', pct:47, links:[] },
+  { title:'📋 리스트',               file:'content/ch09.html', pct:53, links:[] },
+  { title:'✂️ 인덱싱과 슬라이싱',    file:'content/ch10.html', pct:58, links:[] },
+  { title:'🔗 조건문·반복문 활용',   file:'content/ch11.html', pct:63, links:[] },
+  { title:'📌 튜플',                 file:'content/ch12.html', pct:68, links:[] },
+  { title:'🛠️ 함수',                 file:'content/ch13.html', pct:74, links:[] },
+  { title:'📊 리스트 활용',          file:'content/ch14.html', pct:79, links:[] },
+  { title:'📖 딕셔너리',             file:'content/ch15.html', pct:84, links:[] },
+  { title:'🔵 세트',                 file:'content/ch16.html', pct:89, links:[] },
+  { title:'⚙️ 리스트 컴프리헨션',    file:'content/ch17.html', pct:95, links:[] },
+  { title:'🐢 터틀',                 file:'content/ch18.html', pct:100,links:[] },
 ];
 
 let currentCh = 0;
@@ -269,13 +294,22 @@ async function loadChapter(n){
   document.title = `Ch.${n} ${ch.title} — 포켓몬 파이썬`;
   document.getElementById('topSub').textContent = `· Ch.${String(n).padStart(2,'0')} / 18`;
   document.getElementById('chBadge').textContent = `Chapter ${String(n).padStart(2,'0')} — ${ch.title}`;
-  document.getElementById('chTitle').textContent = `Ch.${String(n).padStart(2,'0')} — ${ch.title}`;
   document.getElementById('progFill').style.width = ch.pct + '%';
 
-  // 사이드바 활성화
+  // 사이드바 활성화 + 서브메뉴 토글
   document.querySelectorAll('.sb-item').forEach(el=>{
     el.classList.toggle('active', +el.dataset.ch === n);
   });
+  document.querySelectorAll('.sb-sub').forEach(el=>{
+    el.classList.toggle('open', el.id === `sub-${n}`);
+  });
+
+  // 챕터 제목 옆 링크 버튼
+  const titleEl = document.getElementById('chTitle');
+  const linkBtns = ch.links.map(l =>
+    `<a class="ch-link-btn" href="${l.url}" target="_blank">${l.label} ↗</a>`
+  ).join('');
+  titleEl.innerHTML = `Ch.${String(n).padStart(2,'0')} — ${ch.title}${linkBtns}`;
 
   // 이전/다음 버튼
   const prev = document.getElementById('btnPrev');
