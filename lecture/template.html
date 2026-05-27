@@ -285,11 +285,18 @@ async function loadChapter(n){
   try{
     const res = await fetch(ch.file);
     const text = await res.text();
-    // ${cb(`...`)} 와 ${eb(id,`...`)} 패턴을 직접 치환
-    const html = text
-      .replace(/\$\{cb\(`([\s\S]*?)`\)\}/g, (_, code) => cb(code))
-      .replace(/\$\{eb\((\d+),`([\s\S]*?)`\)\}/g, (_, id, code) => eb(Number(id), code));
-    body.innerHTML = html;
+    body.innerHTML = text;
+    // data-cb: base64 인코딩된 코드를 cb()로 렌더링
+    body.querySelectorAll('pre[data-cb]').forEach(el => {
+      const code = atob(el.dataset.cb);
+      el.outerHTML = cb(code);
+    });
+    // data-eb: base64 인코딩된 코드를 eb()로 렌더링
+    body.querySelectorAll('div[data-eb]').forEach(el => {
+      const id = el.dataset.eb;
+      const code = el.dataset.code ? atob(el.dataset.code) : '';
+      el.outerHTML = eb(Number(id), code);
+    });
     if(pyodide) body.querySelectorAll('.run-btn').forEach(b=>b.disabled=false);
   } catch(e){
     body.innerHTML = `<div class="loading">불러오기 실패: ${e.message}</div>`;
