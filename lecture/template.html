@@ -198,11 +198,11 @@ function cb(code){
   const esc = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const tok = [];
   let r = esc;
-  r = r.replace(/(\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*')/g, m=>{
-    const i=tok.length; tok.push(`<span class="st">${m}</span>`); return `\x00${i}\x00`;
-  });
   r = r.replace(/(#[^\n]*)/g, m=>{
     const i=tok.length; tok.push(`<span class="cm">${m}</span>`); return `\x00${i}\x00`;
+  });
+  r = r.replace(/(\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*')/g, m=>{
+    const i=tok.length; tok.push(`<span class="st">${m}</span>`); return `\x00${i}\x00`;
   });
   r = r.replace(/\b(print|input|range|len|sum|type|int|float|str|list|map|def|return|append)\b/g,'<span class="fn">$1</span>');
   r = r.replace(/\b(if|elif|else|for|while|in|and|or|not|True|False)\b/g,'<span class="kw">$1</span>');
@@ -285,10 +285,11 @@ async function loadChapter(n){
   try{
     const res = await fetch(ch.file);
     const text = await res.text();
-    // 템플릿 리터럴(cb, eb 호출) 평가
-    const html = new Function('cb','eb', `return \`${text}\``)(cb, eb);
+    // ${cb(`...`)} 와 ${eb(id,`...`)} 패턴을 직접 치환
+    const html = text
+      .replace(/\$\{cb\(`([\s\S]*?)`\)\}/g, (_, code) => cb(code))
+      .replace(/\$\{eb\((\d+),`([\s\S]*?)`\)\}/g, (_, id, code) => eb(Number(id), code));
     body.innerHTML = html;
-    // Pyodide 준비됐으면 버튼 활성화
     if(pyodide) body.querySelectorAll('.run-btn').forEach(b=>b.disabled=false);
   } catch(e){
     body.innerHTML = `<div class="loading">불러오기 실패: ${e.message}</div>`;
