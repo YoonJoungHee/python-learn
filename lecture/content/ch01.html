@@ -10,54 +10,30 @@
   <li>문자열에 숫자를 <strong>*</strong> 하면 반복됩니다. (반복)</li>
   <li><code style="font-family:var(--mono)">str()</code> 함수로 다른 자료형을 문자열로 변환할 수 있습니다.</li>
 </ul>
-${cb(`print("대한민국" + " Korea")  # 문자열 연결
-print('Dokdo' * 3)              # 문자열 반복
-print(type("3.74"))             # &lt;class 'str'&gt;
-print("475" + "123")            # 숫자처럼 보여도 문자열!`)}
+<pre data-cb="cHJpbnQoIuuMgO2VnOuvvOq1rSIgKyAiIEtvcmVhIikgICMg66y47J6Q7Je0IOyXsOqysApwcmludCgnRG9rZG8nICogMykgICAgICAgICAgICAgICMg66y47J6Q7Je0IOuwmOuztQpwcmludCh0eXBlKCIzLjc0IikpICAgICAgICAgICAgICMgPGNsYXNzICdzdHInPgpwcmludCgiNDc1IiArICIxMjMiKSAgICAgICAgICAgICMg7Iir7J6Q7LKY65+8IOuztOyXrOuPhCDrrLjsnpDsl7Qh"></pre>
 
 <h3>✏️ 실습 1 — 문자열 직접 입력해 보기</h3>
 <p>아래 코드를 보고 직접 입력한 후 실행해 보세요.</p>
-${cb(`print("시인은 '별'을 보며 잊혀진 이름을 불렀다.")  # 큰따옴표 안에 작은따옴표
-print("대한" + "민국")
-print(3 * "안녕하세요. ")
-print(type("컴퓨터과학"))`)}
-${eb(0,``)}
+<pre data-cb="cHJpbnQoIuyLnOyduOydgCAn67OEJ+ydhCDrs7TrqbAg7J6K7ZiA7KeEIOydtOumhOydhCDrtojroIDri6QuIikgICMg7YGw65Sw7Ji07ZGcIOyViOyXkCDsnpHsnYDrlLDsmLTtkZwKcHJpbnQoIuuMgO2VnCIgKyAi66+86rWtIikKcHJpbnQoMyAqICLslYjrhZXtlZjshLjsmpQuICIpCnByaW50KHR5cGUoIuy7tO2TqO2EsOqzvO2VmSIpKQ=="></pre>
+<div data-eb="0" data-code=""></div>
 
 <h3>🔢 정수형 — int</h3>
 <p>소수점이 없는 수입니다. 사칙연산이 가능하며, <code style="font-family:var(--mono)">int()</code> 함수로 다른 자료형을 정수형으로 변환할 수 있습니다.</p>
-${cb(`print(2371 + 1256)          # 덧셈
-print(2 ** 10)              # 거듭제곱
-print(473 % 10)             # 나머지
-print(type(29))             # &lt;class 'int'&gt;
-print(int(3.14))            # 소수점 버림 → 3
-print(int('2023'))          # 문자열 → 정수`)}
+<pre data-cb="cHJpbnQoMjM3MSArIDEyNTYpICAgICAgICAgICMg642n7IWICnByaW50KDIgKiogMTApICAgICAgICAgICAgICAjIOqxsOuTreygnOqzsQpwcmludCg0NzMgJSAxMCkgICAgICAgICAgICAgIyDrgpjrqLjsp4AKcHJpbnQodHlwZSgyOSkpICAgICAgICAgICAgICMgPGNsYXNzICdpbnQnPgpwcmludChpbnQoMy4xNCkpICAgICAgICAgICAgIyDshozsiJjsoJAg67KE66a8IOKGkiAzCnByaW50KGludCgnMjAyMycpKSAgICAgICAgICAjIOusuOyekOyXtCDihpIg7KCV7IiY"></pre>
 
 <h3>✏️ 실습 2 — 정수형 직접 입력해 보기</h3>
-${cb(`print(2371 + 1256)
-print(2 ** 10)
-print(473 % 10)
-print(type(29))
-print(int(3.14))
-print(int('2023'))`)}
-${eb(1,``)}
+<pre data-cb="cHJpbnQoMjM3MSArIDEyNTYpCnByaW50KDIgKiogMTApCnByaW50KDQ3MyAlIDEwKQpwcmludCh0eXBlKDI5KSkKcHJpbnQoaW50KDMuMTQpKQpwcmludChpbnQoJzIwMjMnKSk="></pre>
+<div data-eb="1" data-code=""></div>
 
 <h3>🔣 실수형 — float</h3>
 <p>소수점이 있는 수입니다. <code style="font-family:var(--mono)">float()</code> 함수로 변환할 수 있습니다. 정수형과 메모리 저장 방식이 다르므로 명확히 구분해야 합니다.</p>
-${cb(`print(274 / 3)              # 나누기 결과는 항상 float
-print(3.1415 * (2 ** 2))    # 실수 연산
-print(float('2023'))        # 문자열 → 실수
-print(type(-245.2456))      # &lt;class 'float'&gt;
-print(0.1 + 0.2)            # 주의: 부동소수점 오차 발생!`)}
+<pre data-cb="cHJpbnQoMjc0IC8gMykgICAgICAgICAgICAgICMg64KY64iE6riwIOqysOqzvOuKlCDtla3sg4EgZmxvYXQKcHJpbnQoMy4xNDE1ICogKDIgKiogMikpICAgICMg7Iuk7IiYIOyXsOyCsApwcmludChmbG9hdCgnMjAyMycpKSAgICAgICAgIyDrrLjsnpDsl7Qg4oaSIOyLpOyImApwcmludCh0eXBlKC0yNDUuMjQ1NikpICAgICAgIyA8Y2xhc3MgJ2Zsb2F0Jz4KcHJpbnQoMC4xICsgMC4yKSAgICAgICAgICAgICMg7KO87J2YOiDrtoDrj5nshozsiJjsoJAg7Jik7LCoIOuwnOyDnSE="></pre>
 
 <div class="warn-box"><strong>⚠️ 부동소수점 오차</strong><code style="font-family:var(--mono)">print(0.1 + 0.2)</code> 를 실행하면 <code style="font-family:var(--mono)">0.30000000000000004</code> 가 나옵니다. 컴퓨터가 실수를 이진수로 저장하는 방식 때문에 생기는 현상입니다.</div>
 
 <h3>✏️ 실습 3 — 실수형 직접 입력해 보기</h3>
-${cb(`print(274 / 3)
-print(3.1415 * (2 ** 2))
-print(float('2023'))
-print(type(-245.2456))
-print(0.1 + 0.2)`)}
-${eb(2,``)}
+<pre data-cb="cHJpbnQoMjc0IC8gMykKcHJpbnQoMy4xNDE1ICogKDIgKiogMikpCnByaW50KGZsb2F0KCcyMDIzJykpCnByaW50KHR5cGUoLTI0NS4yNDU2KSkKcHJpbnQoMC4xICsgMC4yKQ=="></pre>
+<div data-eb="2" data-code=""></div>
 
 <h3>✅ 불형 — bool</h3>
 <p>참(<strong>True</strong>)과 거짓(<strong>False</strong>)만 표현하는 자료형입니다. 조건문에서 매우 중요하게 쓰입니다.</p>
@@ -65,23 +41,15 @@ ${eb(2,``)}
   <li><strong>True</strong>: 1이 아닌 수, 비어있지 않은 문자열</li>
   <li><strong>False</strong>: 0, 0.0, 빈 문자열 <code style="font-family:var(--mono)">""</code></li>
 </ul>
-${cb(`print(True)
-print(False)
-print(type(True))           # &lt;class 'bool'&gt;
-print(1 == 1)               # True
-print(3 > 5)                # False`)}
+<pre data-cb="cHJpbnQoVHJ1ZSkKcHJpbnQoRmFsc2UpCnByaW50KHR5cGUoVHJ1ZSkpICAgICAgICAgICAjIDxjbGFzcyAnYm9vbCc+CnByaW50KDEgPT0gMSkgICAgICAgICAgICAgICAjIFRydWUKcHJpbnQoMyA+IDUpICAgICAgICAgICAgICAgICMgRmFsc2U="></pre>
 
 <h3>✏️ 실습 4 — 불형 직접 입력해 보기</h3>
-${cb(`print(True)
-print(type(False))
-print(1 == 1)
-print(3 > 5)`)}
-${eb(3,``)}
+<pre data-cb="cHJpbnQoVHJ1ZSkKcHJpbnQodHlwZShGYWxzZSkpCnByaW50KDEgPT0gMSkKcHJpbnQoMyA+IDUp"></pre>
+<div data-eb="3" data-code=""></div>
 
 <h3>➕ 복소수형 — complex (참고)</h3>
 <p>허수 기호 <strong>j</strong>를 사용해 복소수를 표현합니다. 고등 수학에서 배우는 개념으로, 파이썬에서 이런 자료형도 지원한다는 정도만 알아두세요.</p>
-${cb(`print(3 + 1j)               # 복소수
-print(type(3 + 1j))         # &lt;class 'complex'&gt;`)}
+<pre data-cb="cHJpbnQoMyArIDFqKSAgICAgICAgICAgICAgICMg67O17IaM7IiYCnByaW50KHR5cGUoMyArIDFqKSkgICAgICAgICAjIDxjbGFzcyAnY29tcGxleCc+"></pre>
 
 <div class="tip-box"><strong>💡 리터럴(literal)</strong>프로그래밍 언어에서 사용하는 자료나 값 자체를 의미합니다.<br>
 <code style="font-family:var(--mono)">'2026'</code> → 문자열 리터럴 &nbsp;|&nbsp;

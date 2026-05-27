@@ -1,62 +1,26 @@
 <h3>🔀 선택문(조건문) — if</h3>
 <p>조건에 따라 다른 코드를 실행합니다. 파이썬에서는 <strong>들여쓰기(4칸 또는 탭)</strong>로 코드 블록을 구분합니다.</p>
 
-${cb(`score = 85
-if score >= 60:
-    print("합격!")
-else:
-    print("불합격")`)}
+<pre data-cb="c2NvcmUgPSA4NQppZiBzY29yZSA+PSA2MDoKICAgIHByaW50KCLtlanqsqkhIikKZWxzZToKICAgIHByaW50KCLrtojtlanqsqkiKQ=="></pre>
 
 <div class="warn-box"><strong>⚠️ 들여쓰기 필수!</strong>들여쓰기가 없거나 일관되지 않으면 오류가 발생합니다.</div>
 
 <h3>✏️ 실습 1 — if~else 직접 입력해 보기</h3>
-${cb(`score = 75
-if score >= 60:
-    print("합격!")
-else:
-    print("불합격")`)}
-${eb(0,``)}
+<pre data-cb="c2NvcmUgPSA3NQppZiBzY29yZSA+PSA2MDoKICAgIHByaW50KCLtlanqsqkhIikKZWxzZToKICAgIHByaW50KCLrtojtlanqsqkiKQ=="></pre>
+<div data-eb="0" data-code=""></div>
 
 <h3>📌 if ~ elif ~ else</h3>
 <p>조건이 여러 개일 때 <code style="font-family:var(--mono)">elif</code>를 사용합니다. 위에서부터 순서대로 확인하고, 처음으로 참인 조건만 실행합니다.</p>
 
-${cb(`score = 78
-if score >= 90:
-    print("A 등급")
-elif score >= 80:
-    print("B 등급")
-elif score >= 70:
-    print("C 등급")
-else:
-    print("D 등급")`)}
+<pre data-cb="c2NvcmUgPSA3OAppZiBzY29yZSA+PSA5MDoKICAgIHByaW50KCJBIOuTseq4iSIpCmVsaWYgc2NvcmUgPj0gODA6CiAgICBwcmludCgiQiDrk7HquIkiKQplbGlmIHNjb3JlID49IDcwOgogICAgcHJpbnQoIkMg65Ox6riJIikKZWxzZToKICAgIHByaW50KCJEIOuTseq4iSIp"></pre>
 
 <h3>✏️ 실습 2 — 등급 판별 직접 입력해 보기</h3>
-${cb(`score = 78
-if score >= 90:
-    print("A 등급")
-elif score >= 80:
-    print("B 등급")
-elif score >= 70:
-    print("C 등급")
-else:
-    print("D 등급")`)}
-${eb(1,``)}
+<pre data-cb="c2NvcmUgPSA3OAppZiBzY29yZSA+PSA5MDoKICAgIHByaW50KCJBIOuTseq4iSIpCmVsaWYgc2NvcmUgPj0gODA6CiAgICBwcmludCgiQiDrk7HquIkiKQplbGlmIHNjb3JlID49IDcwOgogICAgcHJpbnQoIkMg65Ox6riJIikKZWxzZToKICAgIHByaW50KCJEIOuTseq4iSIp"></pre>
+<div data-eb="1" data-code=""></div>
 
 <h3>📌 중첩 if</h3>
-${cb(`age = 20
-has_id = True
-if age >= 18:
-    if has_id:
-        print("입장 가능")
-    else:
-        print("신분증 필요")
-else:
-    print("미성년자 입장 불가")`)}
+<pre data-cb="YWdlID0gMjAKaGFzX2lkID0gVHJ1ZQppZiBhZ2UgPj0gMTg6CiAgICBpZiBoYXNfaWQ6CiAgICAgICAgcHJpbnQoIuyeheyepSDqsIDriqUiKQogICAgZWxzZToKICAgICAgICBwcmludCgi7Iug67aE7KadIO2VhOyalCIpCmVsc2U6CiAgICBwcmludCgi66+47ISx64WE7J6QIOyeheyepSDrtojqsIAiKQ=="></pre>
 
 <h3>✏️ 실습 3 — 홀수/짝수 판별기</h3>
-${cb(`num = 7
-if num % 2 == 0:
-    print(f"{num}은(는) 짝수입니다.")
-else:
-    print(f"{num}은(는) 홀수입니다.")`)}
-${eb(2,``)}
+<pre data-cb="bnVtID0gNwppZiBudW0gJSAyID09IDA6CiAgICBwcmludChmIntudW197J2AKOuKlCkg7Ked7IiY7J6F64uI64ukLiIpCmVsc2U6CiAgICBwcmludChmIntudW197J2AKOuKlCkg7ZmA7IiY7J6F64uI64ukLiIp"></pre>
+<div data-eb="2" data-code=""></div>

@@ -1,29 +1,19 @@
 <h3>📺 print() 함수</h3>
 <p>화면에 값을 출력하는 함수입니다. 괄호 안에 출력할 내용을 넣으면 됩니다.</p>
 
-${cb(`print("안녕하세요!")        # 문자열 출력
-print(2025)               # 숫자 출력
-print(3 + 7)              # 계산 결과 출력
-print(True)               # 불형 출력`)}
+<pre data-cb="cHJpbnQoIuyViOuFle2VmOyEuOyalCEiKSAgICAgICAgIyDrrLjsnpDsl7Qg7Lac66ClCnByaW50KDIwMjUpICAgICAgICAgICAgICAgIyDsiKvsnpAg7Lac66ClCnByaW50KDMgKyA3KSAgICAgICAgICAgICAgIyDqs4TsgrAg6rKw6rO8IOy2nOugpQpwcmludChUcnVlKSAgICAgICAgICAgICAgICMg67aI7ZiVIOy2nOugpQ=="></pre>
 
 <h3>📌 쉼표(,)로 여러 값 출력</h3>
 <p>쉼표로 구분하면 여러 값을 한 줄에 출력할 수 있습니다. 기본적으로 값 사이에 공백이 삽입됩니다.</p>
-${cb(`name = "홍길동"
-age = 17
-print(name, age)           # 홍길동 17
-print(name, age, "살")     # 홍길동 17 살`)}
+<pre data-cb="bmFtZSA9ICLtmY3quLjrj5kiCmFnZSA9IDE3CnByaW50KG5hbWUsIGFnZSkgICAgICAgICAgICMg7ZmN6ri464+ZIDE3CnByaW50KG5hbWUsIGFnZSwgIuyCtCIpICAgICAjIO2Zjeq4uOuPmSAxNyDsgrQ="></pre>
 
 <h3>📌 sep — 구분자 변경</h3>
 <p><code style="font-family:var(--mono)">sep</code> 옵션으로 값 사이의 구분 문자를 바꿀 수 있습니다. 기본값은 공백(" ")입니다.</p>
-${cb(`print("2026", "03", "02", sep="-")   # 2026-03-02
-print("a", "b", "c", sep=", ")       # a, b, c
-print("010", "1234", "5678", sep="-")# 010-1234-5678`)}
+<pre data-cb="cHJpbnQoIjIwMjYiLCAiMDMiLCAiMDIiLCBzZXA9Ii0iKSAgICMgMjAyNi0wMy0wMgpwcmludCgiYSIsICJiIiwgImMiLCBzZXA9IiwgIikgICAgICAgIyBhLCBiLCBjCnByaW50KCIwMTAiLCAiMTIzNCIsICI1Njc4Iiwgc2VwPSItIikjIDAxMC0xMjM0LTU2Nzg="></pre>
 
 <h3>📌 end — 줄바꿈 변경</h3>
 <p>print()는 기본적으로 출력 후 줄을 바꿉니다. <code style="font-family:var(--mono)">end</code> 옵션으로 줄바꿈 대신 다른 문자를 넣을 수 있습니다.</p>
-${cb(`print("안녕", end="")       # 줄바꿈 없음
-print("하세요!")             # 바로 이어서 출력
-print("A", "B", "C", sep="-", end="!\n")  # A-B-C!`)}
+<pre data-cb="cHJpbnQoIuyViOuFlSIsIGVuZD0iIikgICAgICAgIyDspITrsJTqv4gg7JeG7J2MCnByaW50KCLtlZjshLjsmpQhIikgICAgICAgICAgICAgIyDrsJTroZwg7J207Ja07IScIOy2nOugpQpwcmludCgiQSIsICJCIiwgIkMiLCBzZXA9Ii0iLCBlbmQ9IiFcbiIpICAjIEEtQi1DIQ=="></pre>
 
 <h3>📌 이스케이프 문자</h3>
 <p>문자열 안에서 특수한 효과를 내는 문자입니다.</p>
@@ -43,22 +33,13 @@ print("A", "B", "C", sep="-", end="!\n")  # A-B-C!`)}
 </div>
 
 <h3>✏️ 실습 1 — 다양한 print() 옵션 입력해 보기</h3>
-${cb(`print("강아지\n고양이")
-print("이름", "나이", sep="\t")
-print("2026", "1", "1", sep="/")`)}
-${eb(0,``)}
+<pre data-cb="cHJpbnQoIuqwleyVhOyngFxu6rOg7JaR7J20IikKcHJpbnQoIuydtOumhCIsICLrgpjsnbQiLCBzZXA9Ilx0IikKcHJpbnQoIjIwMjYiLCAiMSIsICIxIiwgc2VwPSIvIik="></pre>
+<div data-eb="0" data-code=""></div>
 
 <h3>📌 f-string — 변수를 문자열에 넣기</h3>
 <p>문자열 앞에 <strong>f</strong>를 붙이고 <code style="font-family:var(--mono)">{변수명}</code>을 쓰면 변수 값이 그 자리에 들어갑니다. 가장 많이 쓰이는 출력 방식입니다.</p>
-${cb(`name = "홍길동"
-age = 17
-score = 95.5
-print(f"이름: {name}, 나이: {age}살")
-print(f"점수: {score:.1f}점")   # 소수점 1자리`)}
+<pre data-cb="bmFtZSA9ICLtmY3quLjrj5kiCmFnZSA9IDE3CnNjb3JlID0gOTUuNQpwcmludChmIuydtOumhDoge25hbWV9LCDrgpjsnbQ6IHthZ2V97IK0IikKcHJpbnQoZiLsoJDsiJg6IHtzY29yZTouMWZ97KCQIikgICAjIOyGjOyImOygkCAx7J6Q66as"></pre>
 
 <h3>✏️ 실습 2 — f-string 직접 입력해 보기</h3>
-${cb(`subject = "정보"
-score = 98
-print(f"과목: {subject}")
-print(f"점수: {score}점")`)}
-${eb(1,``)}
+<pre data-cb="c3ViamVjdCA9ICLsoJXrs7QiCnNjb3JlID0gOTgKcHJpbnQoZiLqs7zrqqk6IHtzdWJqZWN0fSIpCnByaW50KGYi7KCQ7IiYOiB7c2NvcmV97KCQIik="></pre>
+<div data-eb="1" data-code=""></div>
