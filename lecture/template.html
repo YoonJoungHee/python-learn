@@ -114,6 +114,12 @@ pre{padding:.875rem 1.25rem;overflow-x:auto;font-family:var(--mono);font-size:12
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* 코드 폰트 합자(ligature) 비활성화 */
+pre, code, .ed-ta, .code-block, table td {
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+}
 </style>
 </head>
 <body>
