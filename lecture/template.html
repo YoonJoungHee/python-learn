@@ -114,6 +114,12 @@ pre{padding:.875rem 1.25rem;overflow-x:auto;font-family:var(--mono);font-size:12
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* 코드 폰트 합자(ligature) 비활성화 */
+pre, code, .ed-ta, .code-block, .code-block *, table, table * {
+  font-variant-ligatures: none !important;
+  font-feature-settings: "liga" 0, "calt" 0, "dlig" 0 !important;
+}
 </style>
 </head>
 <body>
@@ -207,7 +213,7 @@ function cb(code){
   r = r.replace(/\b(print|input|range|len|sum|type|int|float|str|list|map|def|return|append)\b/g,'<span class="fn">$1</span>');
   r = r.replace(/\b(if|elif|else|for|while|in|and|or|not|True|False)\b/g,'<span class="kw">$1</span>');
   r = r.replace(/\x00(\d+)\x00/g,(_,i)=>tok[+i]);
-  return `<div class="code-block"><div class="code-hd"><span class="code-lang">python</span></div><pre>${r}</pre></div>`;
+  return `<div class="code-block"><div class="code-hd"><span class="code-lang">python</span></div><pre style="font-variant-ligatures:none;font-feature-settings:'liga' 0,'calt' 0,'dlig' 0">${r}</pre></div>`;
 }
 
 /* ── 에디터 빌더 ── */
@@ -286,34 +292,31 @@ async function loadChapter(n){
     const res = await fetch(ch.file);
     const text = await res.text();
 
-    // UTF-8 안전 base64 디코딩
-    function b64decode(str){
-      const bin = atob(str);
-      const bytes = new Uint8Array(bin.length);
-      for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
-      return new TextDecoder('utf-8').decode(bytes);
-    }
+    // <pre class="py-code">HTML엔티티코드</pre> → cb() 렌더링
+    // <div class="py-editor" data-id="N">HTML엔티티코드</div> → eb() 렌더링
+    // 텍스트 상태에서 정규식으로 처리 (DOM 파싱 없음)
+    const html = text
+      .replace(/<pre class="py-code">([\s\S]*?)<\/pre>/g, (_, escaped) => {
+        // HTML 엔티티 → 실제 문자로 복원 후 cb()에 전달
+        const code = escaped
+          .replace(/&amp;/g,'&')
+          .replace(/&lt;/g,'<')
+          .replace(/&gt;/g,'>')
+          .replace(/&quot;/g,'"')
+          .replace(/&#39;/g,"'");
+        return cb(code);
+      })
+      .replace(/<div class="py-editor" data-id="(\d+)">([\s\S]*?)<\/div>/g, (_, id, escaped) => {
+        const code = escaped
+          .replace(/&amp;/g,'&')
+          .replace(/&lt;/g,'<')
+          .replace(/&gt;/g,'>')
+          .replace(/&quot;/g,'"')
+          .replace(/&#39;/g,"'");
+        return eb(Number(id), code);
+      });
 
-    // HTML 파싱 전에 data-cb/data-eb 를 직접 처리
-    // innerHTML 대신 DOMParser 사용 (속성값 보존)
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(text, 'text/html');
-
-    doc.querySelectorAll('pre[data-cb]').forEach(el => {
-      const code = b64decode(el.getAttribute('data-cb'));
-      const tmp = document.createElement('div');
-      tmp.innerHTML = cb(code);
-      el.replaceWith(tmp.firstChild);
-    });
-    doc.querySelectorAll('div[data-eb]').forEach(el => {
-      const id = el.getAttribute('data-eb');
-      const code = el.getAttribute('data-code') ? b64decode(el.getAttribute('data-code')) : '';
-      const tmp = document.createElement('div');
-      tmp.innerHTML = eb(Number(id), code);
-      el.replaceWith(tmp.firstChild);
-    });
-
-    body.innerHTML = doc.body.innerHTML;
+    body.innerHTML = html;
     if(pyodide) body.querySelectorAll('.run-btn').forEach(b=>b.disabled=false);
   } catch(e){
     body.innerHTML = `<div class="loading">불러오기 실패: ${e.message}</div>`;
